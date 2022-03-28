@@ -9,9 +9,9 @@ source("R/fun/setup.R")
 
 # load data ---------------------------------------------------------------
 
-access_tp_car <- read_rds("../../data/acesso_oport/output_base_final/2017/dados2017_AcessOport_access_tpcar_v1.0.rds")
-access_active <- read_rds("../../data/acesso_oport/output_base_final/2017/dados2017_AcessOport_access_active_v1.0.rds")
-landuse <- read_rds("../../data/acesso_oport/output_base_final/2017/dados2017_AcessOport_landuse_v1.0.rds")
+access_tp_car <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_access_tpcar_v1.0.rds")
+access_active <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_access_active_v1.0.rds")
+landuse <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_landuse_v1.0.rds")
 
 access_tp_car_df <- st_set_geometry(access_tp_car, NULL)
 access_active_df <- st_set_geometry(access_active, NULL)
