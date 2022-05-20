@@ -45,14 +45,14 @@ summary(aop_data$CMAET60)
 # assuming thresholds
 # para CMAEM30: P25 = 2; P50 = 5
 poverty1_line <- 0
-poverty2_line <- 2
-poverty3_line <- 5
+poverty2_line <- 1
+poverty3_line <- 3
 
 
 aop_data1 <- aop_data1 %>%
-  mutate(poverty1 = ifelse(CMAEM60 <= poverty1_line, TRUE, FALSE)) %>%
-  mutate(poverty2 = ifelse(CMAEM60 <= poverty2_line, TRUE, FALSE)) %>%
-  mutate(poverty3 = ifelse(CMAEM60 <= poverty3_line, TRUE, FALSE))
+  mutate(poverty1 = ifelse(CMAEM30 <= poverty1_line, TRUE, FALSE)) %>%
+  mutate(poverty2 = ifelse(CMAEM30 <= poverty2_line, TRUE, FALSE)) %>%
+  mutate(poverty3 = ifelse(CMAEM30 <= poverty3_line, TRUE, FALSE))
 
 table(aop_data1$poverty1)
 table(aop_data1$poverty2)
@@ -82,24 +82,24 @@ aop_summary_poverty3 <- aop_data1_poverty3 %>%
   group_by(abbrev_muni,name_muni) %>%
   summarise(pop_poverty3 = sum(P012))
 
-aop_summary_poverty1_income <- aop_data1_poverty1 %>%
-  st_set_geometry(NULL) %>%
-  # onlyt the poorest
-  filter(R003 %in% c(1, 2, 3, 4)) %>%
-  group_by(abbrev_muni,name_muni,  R003) %>%
-  summarise(pop_poverty1 = sum(P012))
-aop_summary_poverty2_income <- aop_data1_poverty2 %>%
-  st_set_geometry(NULL) %>%
-  # only the poorest
-  filter(R003 %in% c(1, 2, 3, 4)) %>%
-  group_by(abbrev_muni, name_muni, R003) %>%
-  summarise(pop_poverty2 = sum(P012))
-aop_summary_poverty3_income <- aop_data1_poverty3 %>%
-  st_set_geometry(NULL) %>%
-  # only the poorest
-  filter(R003 %in% c(1, 2, 3, 4)) %>%
-  group_by(abbrev_muni,name_muni, R003) %>%
-  summarise(pop_poverty3 = sum(P012))
+# aop_summary_poverty1_income <- aop_data1_poverty1 %>%
+#   st_set_geometry(NULL) %>%
+#   # onlyt the poorest
+#   filter(R003 %in% c(1, 2, 3, 4)) %>%
+#   group_by(abbrev_muni,name_muni,  R003) %>%
+#   summarise(pop_poverty1 = sum(P012))
+# aop_summary_poverty2_income <- aop_data1_poverty2 %>%
+#   st_set_geometry(NULL) %>%
+#   # only the poorest
+#   filter(R003 %in% c(1, 2, 3, 4)) %>%
+#   group_by(abbrev_muni, name_muni, R003) %>%
+#   summarise(pop_poverty2 = sum(P012))
+# aop_summary_poverty3_income <- aop_data1_poverty3 %>%
+#   st_set_geometry(NULL) %>%
+#   # only the poorest
+#   filter(R003 %in% c(1, 2, 3, 4)) %>%
+#   group_by(abbrev_muni,name_muni, R003) %>%
+#   summarise(pop_poverty3 = sum(P012))
 
 # dadao total
 aop_summary_poverty<- aop_data1 %>%
@@ -107,47 +107,74 @@ aop_summary_poverty<- aop_data1 %>%
   filter(R003 %in% c(1, 2, 3, 4)) %>%
   group_by(abbrev_muni,name_muni) %>%
   summarise(pop_total = sum(P012)) %>%
+  ungroup() %>%
   # join poverty
   left_join(aop_summary_poverty1) %>%
   left_join(aop_summary_poverty2) %>%
   left_join(aop_summary_poverty3) %>%
   # calculate prop
-  mutate(poverty1_prop = 1 - (pop_poverty1 / pop_total),
-         poverty2_prop = 1 - (pop_poverty2 / pop_total),
-         poverty3_prop = 1 - (pop_poverty3 / pop_total))
+  mutate(poverty1_prop = (pop_poverty1 / pop_total),
+         poverty2_prop = (pop_poverty2 / pop_total),
+         poverty3_prop = (pop_poverty3 / pop_total))
 
-aop_summary_poverty_income <- aop_data1 %>%
-  st_set_geometry(NULL) %>%
-  filter(R003 %in% c(1, 2, 3, 4)) %>%
-  group_by(abbrev_muni, name_muni, R003) %>%
-  summarise(pop_total = sum(P012)) %>%
-  ungroup() %>%
-  # join poverty
-  left_join(aop_summary_poverty1_income) %>%
-  left_join(aop_summary_poverty2_income) %>%
-  left_join(aop_summary_poverty3_income) %>%
-  # calculate prop
-  mutate(poverty1_prop = 1 - (pop_poverty1 / pop_total),
-         poverty2_prop = 1 - (pop_poverty2 / pop_total),
-         poverty3_prop = 1 - (pop_poverty3 / pop_total))
+# aop_summary_poverty_income <- aop_data1 %>%
+#   st_set_geometry(NULL) %>%
+#   filter(R003 %in% c(1, 2, 3, 4)) %>%
+#   group_by(abbrev_muni, name_muni, R003) %>%
+#   summarise(pop_total = sum(P012)) %>%
+#   ungroup() %>%
+#   # join poverty
+#   left_join(aop_summary_poverty1_income) %>%
+#   left_join(aop_summary_poverty2_income) %>%
+#   left_join(aop_summary_poverty3_income) %>%
+#   # calculate prop
+#   mutate(poverty1_prop = 1 - (pop_poverty1 / pop_total),
+#          poverty2_prop = 1 - (pop_poverty2 / pop_total),
+#          poverty3_prop = 1 - (pop_poverty3 / pop_total))
 
 # graph
 # data to long format
-aop_summary_poverty_long <- aop_summary_poverty_income %>%
-  select(name_muni, R003, ends_with("prop")) %>%
+aop_summary_poverty_long <- aop_summary_poverty %>%
+  select(name_muni, ends_with("prop")) %>%
+  # select(name_muni, R003, ends_with("prop")) %>%
   tidyr::pivot_longer(cols = poverty1_prop:poverty3_prop, names_to = "poverty_type", values_to = "value")
 
-pobreza_grafico <- ggplot(data = aop_summary_poverty_long)+
-  geom_line(aes(x = R003, y = value, color = poverty_type))+
-  geom_point(aes(x = R003, y = value, color = poverty_type))+
-  facet_wrap(~name_muni)+
+pobreza_grafico <- ggplot(data = aop_summary_poverty)+
+  # geom_line(aes(x = value, y = name_muni , color = poverty_type))+
+  # geom_point(aes(x = value, y = name_muni, color = poverty_type))+
+  ggalt::geom_dumbbell(aes(x = poverty1_prop, xend = poverty3_prop, y = forcats::fct_reorder(name_muni, -poverty1_prop)), 
+                size=3, color="gray80", alpha=.8, colour_x = "steelblue4", colour_xend = "springgreen4")+
+  geom_point(aes(x = poverty2_prop, y = name_muni), color = "black", size = 3) +
+  scale_x_continuous(limits = c(0, 1), labels = scales::percent)+
+  scale_color_manual(values=c('#f0a150', '#f48020', '#f0750f'), 
+                     name="", 
+                     labels=c('Linha 1', 'Linha 2', 'Linha 3')) +
+  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "goi"),
+            aes(x = poverty1_prop, y = name_muni),
+            label = "Linha 1", fontface = "bold",
+            color = "steelblue4",
+            vjust = -1) +
+  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "goi"),
+            aes(x = poverty2_prop, y = name_muni),
+            label = "Linha 2", fontface = "bold",
+            color = "black",
+            vjust = -1) +
+  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "goi"),
+            aes(x = poverty3_prop, y = name_muni),
+            label = "Linha 3", fontface = "bold",
+            color = "springgreen4",
+            vjust = -1) +
+  # theme(panel.border = element_rect(fill = NA, color = "grey40"),
+  #       strip.text = element_text(face = "bold"),
+  #       legend.position = "bottom")+
+  labs(color = "Nível de pobreza",
+       x = "Populacao jovem pobre em probreza",
+       y = "")+
+  hrbrthemes::theme_ipsum(grid = "x")
+  
+  
+  
   scale_color_brewer(palette = "Set1")+
-  scale_y_continuous(limits = c(0, 1), labels = scales::percent)+
-  theme_minimal() +
-  theme(panel.border = element_rect(fill = NA, color = "grey40"),
-        strip.text = element_text(face = "bold"),
-        legend.position = "bottom")+
-  labs(color = "Nível de pobreza")
 
 # salvar
 ggsave(plot = pobreza_grafico, 
