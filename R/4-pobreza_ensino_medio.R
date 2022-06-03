@@ -143,38 +143,37 @@ pobreza_grafico <- ggplot(data = aop_summary_poverty)+
   # geom_line(aes(x = value, y = name_muni , color = poverty_type))+
   # geom_point(aes(x = value, y = name_muni, color = poverty_type))+
   ggalt::geom_dumbbell(aes(x = poverty1_prop, xend = poverty3_prop, y = forcats::fct_reorder(name_muni, -poverty1_prop)), 
-                size=3, color="gray80", alpha=.8, colour_x = "steelblue4", colour_xend = "springgreen4")+
+                       size=3, color="gray80", alpha=.8, colour_x = "steelblue4", colour_xend = "springgreen4")+
   geom_point(aes(x = poverty2_prop, y = name_muni), color = "black", size = 3) +
   scale_x_continuous(limits = c(0, 1), labels = scales::percent)+
   scale_color_manual(values=c('#f0a150', '#f48020', '#f0750f'), 
                      name="", 
                      labels=c('Linha 1', 'Linha 2', 'Linha 3')) +
-  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "goi"),
+  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "rio"),
             aes(x = poverty1_prop, y = name_muni),
-            label = "Linha 1", fontface = "bold",
+            label = "0 escolas", fontface = "bold",
             color = "steelblue4",
             vjust = -1) +
-  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "goi"),
+  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "rio"),
             aes(x = poverty2_prop, y = name_muni),
-            label = "Linha 2", fontface = "bold",
+            label = "1 escola", fontface = "bold",
             color = "black",
             vjust = -1) +
-  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "goi"),
+  geom_text(data = filter(aop_summary_poverty, abbrev_muni == "rio"),
             aes(x = poverty3_prop, y = name_muni),
-            label = "Linha 3", fontface = "bold",
+            label = "3 escolas", fontface = "bold",
             color = "springgreen4",
             vjust = -1) +
   # theme(panel.border = element_rect(fill = NA, color = "grey40"),
   #       strip.text = element_text(face = "bold"),
   #       legend.position = "bottom")+
   labs(color = "Nível de pobreza",
-       x = "Populacao jovem pobre em probreza",
+       x = "Porcentagem da populacao jovem pobre com acesso insuficiente",
        y = "")+
-  hrbrthemes::theme_ipsum(grid = "x")
-  
-  
-  
-  scale_color_brewer(palette = "Set1")+
+  hrbrthemes::theme_ipsum(grid = "X")
+
+
+
 
 # salvar
 ggsave(plot = pobreza_grafico, 
@@ -220,7 +219,7 @@ plot_each_city <- function(variables, poverty = "poverty1") {
   summary_pop <- summary[[a]]
   summary_pop_prob <- summary[[b]]
   
-  ggplot()+
+  plot <- ggplot()+
     geom_sf(data = limits, fill = "grey85", alpha = 0.2) +
     geom_sf(data = data, aes(fill = pop_jovem), color = NA)+
     geom_sf(data = escolas, color = "black")+
@@ -235,27 +234,49 @@ plot_each_city <- function(variables, poverty = "poverty1") {
                          variables, summary_pop, scales::percent(summary_pop_prob, accuracy = 0.01)),
          fill = "Pop jovem")
   
+  # sacale bar
+  if (poverty == "poverty1") {
+    
+    
+    plot +
+      ggsn::scalebar(data = limits, 
+                     dist = 5, dist_unit = "km",
+                     transform = TRUE, model = "WGS84")
+    
+  } else {
+    
+    plot
+    
+  }
+  
 }
 
 
-maps_poverty1 <- lapply(c("spo", "rio"), plot_each_city, "poverty1")
-maps_poverty2 <- lapply(c("spo", "rio"), plot_each_city, "poverty2")
-maps_poverty3 <- lapply(c("spo", "rio"), plot_each_city, "poverty3")
+maps_poverty1 <- lapply(c("for", "poa", "spo", "bho"), plot_each_city, "poverty1")
+maps_poverty2 <- lapply(c("for", "poa", "spo", "bho"), plot_each_city, "poverty2")
+maps_poverty3 <- lapply(c("for", "poa", "spo", "bho"), plot_each_city, "poverty3")
 
 library(patchwork)
-maps_poverty1_patch <- maps_poverty1[[1]] +  maps_poverty1[[2]] + plot_annotation(subtitle = "P1 (0 escolas)") + plot_layout(guides = 'collect') & theme(legend.position = "bottom") 
-maps_poverty2_patch <- maps_poverty2[[1]] +  maps_poverty2[[2]]  + plot_annotation(subtitle = "P1 (2 escolas)") + plot_layout(guides = 'collect') & theme(legend.position = "bottom")
-maps_poverty3_patch <- maps_poverty3[[1]] +  maps_poverty3[[2]]  + plot_annotation(subtitle = "P1 (5 escolas)") + plot_layout(guides = 'collect') & theme(legend.position = "bottom")
+maps_poverty1_patch <- maps_poverty1[[1]] +  maps_poverty1[[2]] + maps_poverty1[[3]] + maps_poverty1[[4]] + 
+  # plot_annotation(subtitle = "P1 (0 escolas)") + 
+  plot_layout(guides = 'collect', nrow = 1) & theme(legend.position = "bottom") 
+maps_poverty2_patch <- maps_poverty2[[1]] +  maps_poverty2[[2]] + maps_poverty2[[3]] + maps_poverty2[[4]] +  
+  # plot_annotation(subtitle = "P1 (1 escola)") + 
+  plot_layout(guides = 'collect', nrow = 1) & theme(legend.position = "bottom")
+maps_poverty3_patch <- maps_poverty3[[1]] +  maps_poverty3[[2]] + maps_poverty3[[3]] + maps_poverty3[[4]] +  
+  # plot_annotation(subtitle = "P1 (3 escolas)") + 
+  plot_layout(guides = 'collect', nrow = 1) & theme(legend.position = "bottom")
 # maps_poverty1_patch <- purrr::reduce(maps_poverty1, `+`)
 # maps_poverty2_patch <- purrr::reduce(maps_poverty2, `+`)
 # maps_poverty3_patch <- purrr::reduce(maps_poverty3, `+`)
 
 # togehter
 library(cowplot)
-maps <- cowplot::plot_grid(maps_poverty1_patch, maps_poverty2_patch, maps_poverty3_patch, nrow = 3
+maps <- cowplot::plot_grid(maps_poverty1_patch, maps_poverty2_patch, maps_poverty3_patch, nrow = 3,
+                           labels = c("A", "B", "C"),
                            # labels = c("Sâo Paulo", "Rio"),
-                           # label_size = 20
-                           )
+                           label_size = 20
+)
 # maps <- cowplot::plot_grid(maps_poverty1_patch, maps_poverty2_patch, ncol = 2,
 #                            labels = c("P=2", "P=5"),
 #                            label_size = 20)
