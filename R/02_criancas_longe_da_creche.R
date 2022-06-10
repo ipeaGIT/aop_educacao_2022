@@ -16,8 +16,8 @@ landuse_df <- st_set_geometry(landuse, NULL)
 
 
 full_df <- rbind(
-  left_join(landuse_df, access_active_df, by = c("id_hex", "sigla_muni")), 
-  left_join(landuse_df, access_tp_car_df, by = c("id_hex", "sigla_muni")),
+  left_join(landuse_df, access_active_df, by = c("id_hex", "sigla_muni", "nome_muni", "code_muni")), 
+  left_join(landuse_df, access_tp_car_df, by = c("id_hex", "sigla_muni", "nome_muni", "code_muni")),
   fill = TRUE
 )
 
@@ -84,6 +84,6 @@ summary_df %>%
 
 ## save plot
 
-ggsave(plot = last_plot(), filename = here::here("figures", "criancas_perto_da_creche.png"),
+ggsave(plot = last_plot(), filename = here::here("figures", "criancas_perto_da_creche_new.png"),
        width = 16, height = 13, units = "cm", dpi = 300, scale=1.3)
 

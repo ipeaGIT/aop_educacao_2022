@@ -95,13 +95,14 @@ estudantes_tidy %>%
   labs(x = NULL, y = "% de estudantes em cada decil de renda",
        fill = "Decil de renda",
        subtitle = "% de vagas em escolas em relação à população em idade escolar") +
-  theme(legend.position = "bottom") +
+  theme(legend.position = "bottom",
+        legend.key.size = unit(0.4, "cm")) +
   guides(fill = guide_legend(nrow = 1)) +
   facet_wrap(~nivel_ensino, nrow = 1)
 
 
 # save plot ---------------------------------------------------------------
 
-ggsave(plot = last_plot(), filename = here::here("figures", "vagas_por_estudante.png"),
+ggsave(plot = last_plot(), filename = here::here("figures", "vagas_por_estudante_new.png"),
        width = 16, height = 12, units = "cm", dpi = 300)
 
