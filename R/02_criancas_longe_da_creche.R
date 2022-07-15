@@ -6,15 +6,6 @@ library(scales)
 
 # load data ---------------------------------------------------------------
 
-# access_tp_car <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_access_tpcar_v1.0.rds")
-# access_active <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_access_active_v1.0.rds")
-# landuse <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_landuse_v1.0.rds")
-# 
-# access_tp_car_df <- st_set_geometry(access_tp_car, NULL)
-# access_active_df <- st_set_geometry(access_active, NULL)
-# landuse_df <- st_set_geometry(landuse, NULL)
-
-
 access_active_df <- aopdata::read_access(city="all", year = 2019)
 
 # figura - % de crianças de 0 a 5 anos e de baixa renda a mais de 15/30 min de caminhada da escola mais próxima -----------------------------------------------
@@ -45,13 +36,13 @@ summary_df <- geral_df %>%
   mutate(p_children_above_15m = children_above_15m / children,
          p_children_above_30m = children_above_30m / children)
 
-summary_df <- geral_df %>%
-  count(abbrev_muni, name_muni, tempo_viagem, wt = pop_criancas) %>%
-  group_by(abbrev_muni, name_muni) %>%
-  mutate(p = n / sum(n)) %>%
-  filter(tempo_viagem != "-") %>%
-  arrange(name_muni, desc(tempo_viagem)) %>%
-  mutate(cum_p = p + lag(p, default = 0))
+# summary_df <- geral_df %>%
+#   count(abbrev_muni, name_muni, tempo_viagem, wt = pop_criancas) %>%
+#   group_by(abbrev_muni, name_muni) %>%
+#   mutate(p = n / sum(n)) %>%
+#   filter(tempo_viagem != "-") %>%
+#   arrange(name_muni, desc(tempo_viagem)) %>%
+#   mutate(cum_p = p + lag(p, default = 0))
 
 glimpse(summary_df)
 
