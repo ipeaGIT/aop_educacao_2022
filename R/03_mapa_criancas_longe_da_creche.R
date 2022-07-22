@@ -8,28 +8,16 @@ library(ggspatial)
 
 # load data ---------------------------------------------------------------
 
-access_tp_car <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_access_tpcar_v1.0.rds")
-access_active <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_access_active_v1.0.rds")
-landuse <- read_rds("../../data/acesso_oport/output_base_final/2019/dados2019_AcessOport_landuse_v1.0.rds")
-
-access_tp_car_df <- st_set_geometry(access_tp_car, NULL)
-access_active_df <- st_set_geometry(access_active, NULL)
-landuse_df <- st_set_geometry(landuse, NULL)
-
-
-full_df <- rbind(
-  left_join(landuse_df, access_active_df, by = c("id_hex", "sigla_muni", "nome_muni", "code_muni")), 
-  left_join(landuse_df, access_tp_car_df, by = c("id_hex", "sigla_muni", "nome_muni", "code_muni")),
-  fill = TRUE
-)
+landuse <- aopdata::read_landuse(city = "all", year = 2019, geometry = TRUE)
+access_active_df <- aopdata::read_access(city="all", year = 2019, geometry = TRUE)
 
 # figura - localização das crianças de 0 a 5 anos e de baixa renda a mais de 15/30 min de caminhada da escola mais próxima -----------------------------------------------
 
 ## preparação dos dados ----
 
-geral_df <- full_df %>%
-  filter(P010 > 0, R003 > 0, modo == "caminhada") %>%
-  select(id_hex, sigla_muni, nome_muni, 
+geral_df <- access_active_df %>%
+  filter(P010 > 0, R003 > 0, mode == "walk") %>%
+  select(id_hex, abbrev_muni, name_muni, 
          populacao = P001, 
          pop_criancas = P010, 
          renda_decil = R003, 
@@ -42,24 +30,18 @@ geral_df <- full_df %>%
   drop_na()
 
 
-
-
-
 # localização das crianças longe da escola
 
-longe_df <- geral_df %>%
-  filter(tempo_viagem != "15 min", renda_decil %in% c(1, 2, 3, 4)) 
-
-longe_df$geometry <- h3jsr::h3_to_polygon(longe_df$id_hex)
-longe_sf <- st_as_sf(longe_df, crs=4326)
-
-
+# muni = "poa"
+# longe = 15
+# size = 16
+# title = "Porto Alegre"
 mapa_criancas_sem_escola <- function(muni, longe = "30 min", size = 16, title) {
 
   # centroide da cidade
   centroid_sf <- landuse %>%
-    filter(sigla_muni == muni, P001 > 0) %>%
-    group_by(nome_muni) %>%
+    filter(abbrev_muni == muni, P001 > 0) %>%
+    group_by(name_muni) %>%
     summarise() %>%
     st_centroid()
   
@@ -68,20 +50,13 @@ mapa_criancas_sem_escola <- function(muni, longe = "30 min", size = 16, title) {
     st_buffer(dist = size) %>%
     st_bbox()
   
-  # borda dos hexagonos a 30 min de caminhada
-  # longe_30min <- filter(longe_sf, sigla_muni == muni, tempo_viagem == "30 min") %>%
-  #   summarise()
-  
   longe_sf %>%
-    filter(sigla_muni == muni, pop_criancas > 0, tempo_viagem %in% longe) %>%
+    filter(abbrev_muni == muni, pop_criancas > 0, TMIEI > longe) %>%
     ggplot() +
-    geom_sf(data=filter(landuse, sigla_muni == muni, P001 > 0, R003 > 4), fill="grey90", color="grey85", size = 0.1) +
-    geom_sf(data=filter(landuse, sigla_muni == muni, P001 > 0, R003 <= 4), fill="grey80", color="grey70", size = 0.1) +
-    geom_sf(data=filter(landuse, sigla_muni == muni, E002 > 0), fill=muted("blue"), color="grey70", size = 0.05) +
+    geom_sf(data=filter(landuse, abbrev_muni == muni, P001 > 0, R003 > 5), fill="grey90", color="grey85", size = 0.1) +
+    geom_sf(data=filter(landuse, abbrev_muni == muni, P001 > 0, R003 <= 5), fill="grey80", color="grey70", size = 0.1) +
+    geom_sf(data=filter(landuse, abbrev_muni == muni, E002 > 0), fill=muted("blue"), color="grey70", size = 0.05) +
     geom_sf(aes(fill=pop_criancas), color=NA) +
-    # geom_sf(data=longe_30min, fill=NA, color="grey40", size = 0.3) +
-    # geom_sf(data=filter(longe_sf, sigla_muni == muni, tempo_viagem == "-"), 
-    #         fill=NA, color=muted("blue"), size = 0.1) +
     coord_sf(datum = NA,
              xlim = c(b_box["xmin"], b_box["xmax"]),
              ylim = c(b_box["ymin"], b_box["ymax"])) +
@@ -91,7 +66,7 @@ mapa_criancas_sem_escola <- function(muni, longe = "30 min", size = 16, title) {
     theme(legend.position = "right",
           panel.border = element_rect(fill = NA, color = "grey20")) +
     annotate(geom = "text", x = b_box["xmin"], y = b_box["ymax"], hjust = 0,
-             label = centroid_sf$nome_muni[[1]]) +
+             label = centroid_sf$name_muni[[1]]) +
     annotation_scale(location = "br", width_hint = 0.5, style = "ticks")
   
 }
@@ -103,10 +78,17 @@ map_and_save <- function(muni) {
          units = "cm", dpi = 300)
 }
 
-m_poa_15 <- mapa_criancas_sem_escola("poa", longe = c("30 min", "-"))
-m_poa_30 <- mapa_criancas_sem_escola("poa", longe = "-")
+m_poa_15 <- mapa_criancas_sem_escola("poa", longe = 15)
+m_poa_30 <- mapa_criancas_sem_escola("poa", longe = 30)
 
-m_poa_15 + m_poa_30 + plot_layout(guides = "collect")
+m_rec_15 <- mapa_criancas_sem_escola("rec", longe = 15)
+m_rec_30 <- mapa_criancas_sem_escola("rec", longe = 30)
+
+m_slz_15 <- mapa_criancas_sem_escola("slz", longe = 15)
+m_slz_30 <- mapa_criancas_sem_escola("slz", longe = 30)
+
+m_rec_15 + m_rec_30 + m_poa_15 + m_poa_30 + m_slz_15 + m_slz_30 +
+  plot_layout(guides = "collect", ncol=2)
 
 m_cur <- mapa_criancas_sem_escola("cur")
 m_rec <- mapa_criancas_sem_escola("rec")
@@ -116,7 +98,7 @@ m_slz <- mapa_criancas_sem_escola("slz")
 m_cam <- mapa_criancas_sem_escola("cam")
 m_for <- mapa_criancas_sem_escola("for")
 
-plot_mapas <- m_rec + m_poa + m_slz + m_sgo + 
+plot_mapas <- m_rec_15 + m_rec_30 + m_poa_15 + m_poa_30 + m_slz_15 + m_slz_30 +
   plot_layout(ncol = 2, guides = "collect") +
   plot_annotation(title = "Crianças de 0 a 5 anos de idade a mais de 15 ou 30 minutos\nde caminhada da creche mais próxima",
                   caption = "hexágonos contornados em cinza: tempo de viagem entre 15 min e 30 minutos")
