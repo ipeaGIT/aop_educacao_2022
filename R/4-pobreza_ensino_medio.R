@@ -66,19 +66,19 @@ aop_data1_poverty3 <- aop_data1 %>% filter(poverty3)
 aop_summary_poverty1 <- aop_data1_poverty1 %>%
   st_set_geometry(NULL) %>%
   # onlyt the poorest
-  filter(R003 %in% c(1, 2, 3, 4)) %>%
+  filter(R003 %in% c(1, 2, 3, 4, 5)) %>%
   group_by(abbrev_muni,name_muni) %>%
   summarise(pop_poverty1 = sum(P012))
 aop_summary_poverty2 <- aop_data1_poverty2 %>%
   st_set_geometry(NULL) %>%
   # only the poorest
-  filter(R003 %in% c(1, 2, 3, 4)) %>%
+  filter(R003 %in% c(1, 2, 3, 4, 5)) %>%
   group_by(abbrev_muni, name_muni) %>%
   summarise(pop_poverty2 = sum(P012))
 aop_summary_poverty3 <- aop_data1_poverty3 %>%
   st_set_geometry(NULL) %>%
   # only the poorest
-  filter(R003 %in% c(1, 2, 3, 4)) %>%
+  filter(R003 %in% c(1, 2, 3, 4, 5)) %>%
   group_by(abbrev_muni,name_muni) %>%
   summarise(pop_poverty3 = sum(P012))
 
@@ -195,6 +195,7 @@ plot_each_city <- function(variables, poverty = "poverty1") {
   # select dataset
   data <- get(sprintf("aop_data1_%s", poverty))
   
+  muni <- data %>% filter(abbrev_muni %in% variables)
   code <- data %>% filter(abbrev_muni %in% variables) %>% pull(code_muni) %>% unique(.)
   limits <- geobr::read_municipality(code)
   data <- data %>% filter(abbrev_muni %in% variables) %>%
@@ -220,6 +221,11 @@ plot_each_city <- function(variables, poverty = "poverty1") {
   summary_pop_prob <- summary[[b]]
   
   plot <- ggplot()+
+    # ggspatial::annotation_map_tile(
+    #   zoom = 12
+    #   #, zoomin = -1
+    #   , type = "cartolight" #cartodark
+    # )+
     geom_sf(data = limits, fill = "grey85", alpha = 0.2) +
     geom_sf(data = data, aes(fill = pop_jovem), color = NA)+
     geom_sf(data = escolas, color = "black")+
@@ -229,9 +235,10 @@ plot_each_city <- function(variables, poverty = "poverty1") {
     theme_void()+
     theme(legend.position = "bottom",
           title = element_text(size = 14),
-          legend.text = element_text(size = 15))+
-    labs(title = sprintf("%s: %s people (%s)", 
-                         variables, summary_pop, scales::percent(summary_pop_prob, accuracy = 0.01)),
+          legend.text = element_text(size = 15),
+          legend.key.width = unit(1, 'cm'))+
+    labs(subtitle = sprintf("%s: %s pessoas (%s)", 
+                         muni$name_muni, summary_pop, scales::percent(summary_pop_prob, accuracy = 0.01)),
          fill = "Pop jovem")
   
   # sacale bar
@@ -252,20 +259,20 @@ plot_each_city <- function(variables, poverty = "poverty1") {
 }
 
 
-maps_poverty1 <- lapply(c("for", "poa", "spo", "bho"), plot_each_city, "poverty1")
-maps_poverty2 <- lapply(c("for", "poa", "spo", "bho"), plot_each_city, "poverty2")
-maps_poverty3 <- lapply(c("for", "poa", "spo", "bho"), plot_each_city, "poverty3")
+maps_poverty1 <- lapply(c("for", "bho",  "poa"), plot_each_city, "poverty1")
+maps_poverty2 <- lapply(c("for", "bho",  "poa"), plot_each_city, "poverty2")
+maps_poverty3 <- lapply(c("for", "bho",  "poa"), plot_each_city, "poverty3")
 
 library(patchwork)
-maps_poverty1_patch <- maps_poverty1[[1]] +  maps_poverty1[[2]] + maps_poverty1[[3]] + maps_poverty1[[4]] + 
+maps_poverty1_patch <- maps_poverty1[[1]] +  maps_poverty1[[2]] + maps_poverty1[[3]] +  
   # plot_annotation(subtitle = "P1 (0 escolas)") + 
-  plot_layout(guides = 'collect', nrow = 1) & theme(legend.position = "bottom") 
-maps_poverty2_patch <- maps_poverty2[[1]] +  maps_poverty2[[2]] + maps_poverty2[[3]] + maps_poverty2[[4]] +  
+  plot_layout(guides = 'collect', nrow = 1, widths = c(1, 1, 1)) & theme(legend.position = "bottom") 
+maps_poverty2_patch <- maps_poverty2[[1]] +  maps_poverty2[[2]] + maps_poverty2[[3]] +   
   # plot_annotation(subtitle = "P1 (1 escola)") + 
-  plot_layout(guides = 'collect', nrow = 1) & theme(legend.position = "bottom")
-maps_poverty3_patch <- maps_poverty3[[1]] +  maps_poverty3[[2]] + maps_poverty3[[3]] + maps_poverty3[[4]] +  
+  plot_layout(guides = 'collect', nrow = 1, widths = c(1, 1, 1)) & theme(legend.position = "bottom")
+maps_poverty3_patch <- maps_poverty3[[1]] +  maps_poverty3[[2]] + maps_poverty3[[3]] +   
   # plot_annotation(subtitle = "P1 (3 escolas)") + 
-  plot_layout(guides = 'collect', nrow = 1) & theme(legend.position = "bottom")
+  plot_layout(guides = 'collect', nrow = 1, widths = c(1, 1, 1)) & theme(legend.position = "bottom")
 # maps_poverty1_patch <- purrr::reduce(maps_poverty1, `+`)
 # maps_poverty2_patch <- purrr::reduce(maps_poverty2, `+`)
 # maps_poverty3_patch <- purrr::reduce(maps_poverty3, `+`)
@@ -274,6 +281,8 @@ maps_poverty3_patch <- maps_poverty3[[1]] +  maps_poverty3[[2]] + maps_poverty3[
 library(cowplot)
 maps <- cowplot::plot_grid(maps_poverty1_patch, maps_poverty2_patch, maps_poverty3_patch, nrow = 3,
                            labels = c("A", "B", "C"),
+                           # label_y = 1,
+                          vjust = 0.5,
                            # labels = c("Sâo Paulo", "Rio"),
                            label_size = 20
 )
@@ -283,5 +292,5 @@ maps <- cowplot::plot_grid(maps_poverty1_patch, maps_poverty2_patch, maps_povert
 
 ggsave(plot = maps, 
        filename = "figures/poverty_ensino_medio/poverty_ensino_medio_spo-rio.png",
-       height = 22, width = 18
+       height = 25, width = 18
 )
