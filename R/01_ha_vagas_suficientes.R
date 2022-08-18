@@ -13,7 +13,7 @@ landuse_df <- aopdata::read_landuse(city="all", year = 2019)
 ## select number of students in each age group and school places by education level
 
 vagas_por_estudante_df <- landuse_df %>% 
-  select(id_hex, abbrev_muni, name_muni, 
+  dplyr::select(id_hex, abbrev_muni, name_muni, 
          pop_total = P001, 
          pop_0a5   = P010, 
          pop_6a14  = P011, 
@@ -23,7 +23,7 @@ vagas_por_estudante_df <- landuse_df %>%
          mat_fundamental = M003,
          mat_medio       = M004) %>%
   group_by(abbrev_muni, name_muni) %>%
-  summarise(across(.cols = where(is.numeric), .fns = sum), .groups = "drop") %>%
+  summarise(across(.cols = where(is.numeric), .fns = sum, na.rm = TRUE), .groups = "drop") %>%
   mutate(ratio_infantil = mat_infantil / pop_0a5,
          ratio_fundamental = mat_fundamental / pop_6a14,
          ratio_medio = mat_medio / pop_15a18)
@@ -39,7 +39,7 @@ vagas_tidy <- vagas_por_estudante_df %>%
 ## proportion of students per income decile
 
 estudantes_por_decil_df <- landuse_df %>% 
-  select(id_hex, abbrev_muni, name_muni, 
+  dplyr::select(id_hex, abbrev_muni, name_muni, 
          renda_decil = R003,
          pop_total = P001, 
          pop_0a5   = P010, 
@@ -64,7 +64,7 @@ estudantes_tidy <- estudantes_por_decil_df %>%
 # plot --------------------------------------------------------------------
 
 cidades_factor <- vagas_tidy %>%
-  select(abbrev_muni, name_muni, nivel_ensino, proporcao_atendidos) %>%
+  dplyr::select(abbrev_muni, name_muni, nivel_ensino, proporcao_atendidos) %>%
   filter(nivel_ensino == "fundamental") %>%
   arrange(proporcao_atendidos)
 
@@ -76,7 +76,7 @@ estudantes_tidy %>%
   coord_flip() +
   scale_fill_viridis_d(option="E", direction = 1) +
   scale_y_continuous(breaks = seq(0, 1, 0.2), labels = seq(0, 100, 20)) +
-  labs(x = NULL, y = "% de estudantes em cada decil de renda",
+  labs(x = NULL, y = "% de crianças em cada decil de renda",
        fill = "Decil de renda",
        subtitle = "% de vagas em escolas em relação à população em idade escolar") +
   theme(legend.position = "bottom",
