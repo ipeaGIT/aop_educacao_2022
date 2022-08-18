@@ -14,6 +14,7 @@ suppressPackageStartupMessages({
   library(dplyr)
   library(tidyr)
   library(stringr)
+  library(ggplot2)
 })
 
 # Set target options:
@@ -35,8 +36,18 @@ tar_source()
 
 # Replace the target list below with your own:
 list(
-  tar_target(data_by_hex, get_landuse_data()),
-  tar_target(data_by_city, aggregate_landuse_by_city(data_by_hex))
+  
+  # preparação dos dados
+  tar_target(pop_mat_por_hex, download_uso_do_solo()),
+  tar_target(pop_mat_por_cidade, agregar_uso_do_solo_por_cidade(pop_mat_por_hex)),
+  tar_target(pop_por_decil, agregar_populacao_por_decil(pop_mat_por_hex)),
+  tar_target(cobertura_de_vagas, calcular_cobertura_de_vagas(pop_mat_por_cidade)),
+  
+  
+  # tabelas, figuras e mapas para o relatório
+  
+  tar_target(figura_cobertura_de_vagas, plotar_cobertura_de_vagas(cobertura_de_vagas, pop_por_decil), format = "file")
+  
 )
 
 

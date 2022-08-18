@@ -1,6 +1,6 @@
 
 
-get_landuse_data <- function() {
+download_uso_do_solo <- function() {
   # baixar dados do aopdata
   data <- aopdata::read_landuse(city="all", geometry = FALSE, year = 2019, showProgress = FALSE)
   
@@ -50,8 +50,8 @@ get_landuse_data <- function() {
   return(data_processed)
 }
 
-# data <- tar_read(data_by_hex)
-aggregate_landuse_by_city <- function(data) {
+# data <- tar_read(pop_mat_por_hex)
+agregar_uso_do_solo_por_cidade <- function(data) {
   
   data_aggregated <- data |> 
     group_by(abbrev_muni, name_muni, code_muni, idade, nivel_ensino) |> 
@@ -59,10 +59,32 @@ aggregate_landuse_by_city <- function(data) {
               matriculas = sum(matriculas, na.rm = T),
               .groups = "drop") |> 
     group_by(abbrev_muni) |> 
-    mutate(pop_total = sum(populacao), mat_total = sum(matriculas))
+    mutate(pop_total = sum(populacao), mat_total = sum(matriculas)) 
   
   
   return(data_aggregated)
 }
 
+# data <- tar_read(pop_mat_por_hex)
+agregar_populacao_por_decil <- function(data) {
+  data_processed <- data |> 
+    group_by(abbrev_muni, name_muni, code_muni, renda_decil, idade, nivel_ensino) |> 
+    summarise(populacao = sum(populacao, na.rm = TRUE), .groups = "drop") |> 
+    filter(renda_decil != 0) |> 
+    group_by(abbrev_muni, name_muni, code_muni, idade) |> 
+    mutate(proporcao = populacao / sum(populacao)) 
+    
+    
+  return(data_processed)
+}
+
+# data <- tar_read(pop_mat_por_cidade)
+calcular_cobertura_de_vagas <- function(data) {
+  data_processed <- data |> 
+    mutate(cobertura = matriculas / populacao) |>
+    select(-ends_with("total"))
+  
+  return(data_processed)
+   
+}
 
