@@ -1,0 +1,8 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+.Random.seed|object|c2e83dd41bdf59e1|||||||||||||||
+aggregate_by_city|function|cf6eb633b88552ed|||||||||||||||
+aggregate_landuse_by_city|function|8908c3f0331458f8|||||||||||||||
+data_by_city|stem|55026f9b5abc3fed|89d5dc39a37b667d|79232f4e0c6d7e68|959769690||t19222.6095949074s|4f5338fffcd0c592|1535|rds|local|vector|||0.03||
+data_by_hex|stem|1e6642f0fa317d43|5031c262fed2cbba|a2c69e78898f6b41|-951282730||t19222.6050462963s|8e9b9b3d6279c633|625266|rds|local|vector|||33.84||
+get_landuse_data|function|dba56ead4d8ff60c|||||||||||||||
+landuse_data|stem|434349ddaa08e104|5031c262fed2cbba|785d8bbfe1b7c2a3|-1486974191||t19222.5689236111s|547e7b27cc137afd|3802655|rds|local|vector|||35.26||
