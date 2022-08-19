@@ -32,10 +32,10 @@ geral_df <- access_active_df %>%
 
 # localização das crianças longe da escola
 
-# muni = "poa"
-# longe = 15
-# size = 16
-# title = "Porto Alegre"
+muni = "poa"
+longe = 15
+size = 16
+title = "Porto Alegre"
 mapa_criancas_sem_escola <- function(muni, longe = "30 min", size = 16, title) {
 
   # centroide da cidade
@@ -50,7 +50,7 @@ mapa_criancas_sem_escola <- function(muni, longe = "30 min", size = 16, title) {
     st_buffer(dist = size) %>%
     st_bbox()
   
-  longe_sf %>%
+  geral_df %>%
     filter(abbrev_muni == muni, pop_criancas > 0, TMIEI > longe) %>%
     ggplot() +
     geom_sf(data=filter(landuse, abbrev_muni == muni, P001 > 0, R003 > 5), fill="grey90", color="grey85", size = 0.1) +
