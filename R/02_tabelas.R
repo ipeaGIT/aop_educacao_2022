@@ -21,7 +21,7 @@ criar_tabela_renda_media <- function() {
   tabela_md <- kable(tabela_df, format = "markdown", digits = 2)
 
   # save table
-  txt_file <- here::here("output", "tab_a1_renda_media.txt")
+  txt_file <- here::here("output", "tab_a1_renda_media.md")
   
   save_kable(tabela_md, file = txt_file)
   
@@ -54,7 +54,7 @@ criar_tabela_escolas <- function() {
   tabela_md <- kable(tabela_df, format = "markdown", digits = 0)
   
   # save table
-  txt_file <- here::here("output", "tab_b1_qtd_escolas.txt")
+  txt_file <- here::here("output", "tab_b1_qtd_escolas.md")
   
   save_kable(tabela_md, file = txt_file)
   
@@ -87,7 +87,7 @@ criar_tabela_matriculas <- function() {
   tabela_md <- kable(tabela_df, format = "markdown", digits = 0)
   
   # save table
-  txt_file <- here::here("output", "tab_b2_qtd_matriculas.txt")
+  txt_file <- here::here("output", "tab_b2_qtd_matriculas.md")
   
   save_kable(tabela_md, file = txt_file)
   

@@ -1,5 +1,5 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|941e3f6c7d60f12c|||||||||||||||
+.Random.seed|object|587a37bc47031212|||||||||||||||
 acessibilidade_por_hex|stem|de1cb091ea71edd2|34146d534678d69d|fc96abdce12579d6|1435642410||t19223.8774424639s|745c43d3885f6241|1310956|rds|local|vector|||55.601||
 agregar_populacao_por_decil|function|fc78a5a83f3cf423|||||||||||||||
 agregar_uso_do_solo_por_cidade|function|098ef32273019b03|||||||||||||||
@@ -10,9 +10,9 @@ calcular_insuficiencia_ens_infantil_por_hex|function|8a89fd2c78f80c63|||||||||||
 calcular_insuficiencia_ens_medio_por_cidade|function|1f5dd2c87609c213|||||||||||||||
 calcular_insuficiencia_ens_medio_por_hex|function|1e961fec78d258b1|||||||||||||||
 cobertura_de_vagas|stem|aec20a0d11f1b714|f65aeda0709fcd39|528c85aff6325e9f|-1885326151||t19223.8543875741s|c56086d98179462e|1975|rds|local|vector|||0.013||
-criar_tabela_escolas|function|a4edd927b96db2a5|||||||||||||||
-criar_tabela_matriculas|function|c8553c7de66135fe|||||||||||||||
-criar_tabela_renda_media|function|9a8c9f69bc3e3996|||||||||||||||
+criar_tabela_escolas|function|dfe871b28d59c986|||||||||||||||
+criar_tabela_matriculas|function|6130218dfea55f0d|||||||||||||||
+criar_tabela_renda_media|function|ed3f3767d441fade|||||||||||||||
 download_acessibilidade|function|e2b8421a6706112a|||||||||||||||
 download_hexgrid|function|d7c9e5b9f904fbf5|||||||||||||||
 download_limites_municipais|function|dc674790b79f37fe|||||||||||||||
@@ -37,6 +37,6 @@ plotar_insuficiencia_ens_medio|function|b671b136f5b8a8c9|||||||||||||||
 pop_mat_por_cidade|stem|ffb20d0ffa84a4f8|6de9bfee39376663|7a309ef2c7631df6|-276898464||t19223.8543787314s|037877574d0cd39f|1600|rds|local|vector|||0.083||
 pop_mat_por_hex|stem|ad9f5e462d50ef30|34e2e55fbb59fac5|8751b8012eb71ade|2075820631||t19223.8540975257s|74393ac6bfe716f2|625153|rds|local|vector|||19.545||
 pop_por_decil|stem|2020cd775c4703b6|d293665d3dd4d103|e0c748489c7521f0|-75503378||t19223.8543777129s|a6b8809c2c928132|9296|rds|local|vector|||0.108||
-tabela_escolas|stem|72be10ced6d1a1bc|ca3ff6e9d46d78c0|1d8a36f78025e0be|2093654019|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_b1_qtd_escolas.txt|t19223.8732114034s|f37ec1c8cd67f23d|1527|file|local|vector|||2.536||
-tabela_matriculas|stem|d2efaa29b9f5da8f|18a46c0ac2355937|014149ea59a9cca0|603287310|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_b2_qtd_matriculas.txt|t19223.8732658021s|b344fe9624bddfd4|1593|file|local|vector|||2.339||
-tabela_renda_media|stem|084c015c11b5891a|87b50bc2f056450e|154440d64bb53862|589031757|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_a1_renda_media.txt|t19223.8732387185s|1cca554f0e92ae2a|1329|file|local|vector|||2.353||
+tabela_escolas|stem|72be10ced6d1a1bc|ca3ff6e9d46d78c0|d7dbe60270754af8|2093654019|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_b1_qtd_escolas.md|t19223.8819592218s|f37ec1c8cd67f23d|1527|file|local|vector|||26.898||
+tabela_matriculas|stem|d2efaa29b9f5da8f|18a46c0ac2355937|2397de38306457ef|603287310|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_b2_qtd_matriculas.md|t19223.8820170927s|b344fe9624bddfd4|1593|file|local|vector|||2.703||
+tabela_renda_media|stem|084c015c11b5891a|87b50bc2f056450e|c4d0f32109ff8dd9|589031757|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_a1_renda_media.md|t19223.8819894998s|1cca554f0e92ae2a|1329|file|local|vector|||2.613||
