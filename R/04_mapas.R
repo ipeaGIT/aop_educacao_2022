@@ -49,6 +49,75 @@ mapear_insuficiencia_ens_infantil <- function(hexgrid, limites_municipais, insuf
   return(figura)
 }
 
+
+# hexgrid <- tar_read(hexgrid)
+# insuficiencia_ens_medio_por_hex <- tar_read(insuficiencia_ens_medio_por_hex)
+# limites_municipais <- tar_read(limites_municipais)
+mapear_insuficiencia_ens_medio <- function(hexgrid, limites_municipais, insuficiencia_ens_medio_por_hex) {
+  
+  # número máximo de jovens em situação de insuficiência de acessibilidade nas 3 
+  # cidades, usado para uniformizar as legendas
+  max_pop <- insuficiencia_ens_medio_por_hex |> 
+    filter(abbrev_muni %in% c("for", "bho", "poa")) |> 
+    summarise(max_pop = max(pop_li_3)) |> 
+    pull(max_pop)
+  
+  m_for_0 <- mapear_cidade(cidade = "for", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_0", max_pop = max_pop,
+                           titulo = "Linha de Insuficiência: 0 escolas")
+
+  m_for_1 <- mapear_cidade(cidade = "for", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_1", max_pop = max_pop,
+                           titulo = "Linha de Insuficiência: 1 escolas")
+
+  m_for_3 <- mapear_cidade(cidade = "for", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_3", max_pop = max_pop,
+                           titulo = "Linha de Insuficiência: 3 escolas")
+  
+  m_poa_0 <- mapear_cidade(cidade = "poa", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_0", max_pop = max_pop, titulo = NULL)
+  
+  m_poa_1 <- mapear_cidade(cidade = "poa", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_1", max_pop = max_pop, titulo = NULL)
+  
+  m_poa_3 <- mapear_cidade(cidade = "poa", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_3", max_pop = max_pop, titulo = NULL)
+  
+  m_bho_0 <- mapear_cidade(cidade = "bho", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_0", max_pop = max_pop, titulo = NULL)
+  
+  m_bho_1 <- mapear_cidade(cidade = "bho", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_1", max_pop = max_pop, titulo = NULL)
+  
+  m_bho_3 <- mapear_cidade(cidade = "bho", hexgrid = hexgrid, limite = limites_municipais,
+                           insuf_hex = insuficiencia_ens_medio_por_hex, 
+                           li = "pop_li_3", max_pop = max_pop, titulo = NULL)
+
+
+  p <- m_for_0 + m_for_1 + m_for_3 + 
+    m_bho_0 + m_bho_1 + m_bho_3 +
+    m_poa_0 + m_poa_1 + m_poa_3 +
+    plot_annotation(title = "Jovens de 15 a 18 anos de idade com acesso a até 0, 1 ou 3 escolas em 30 minutos de viagem por transporte público") +
+    plot_layout(guides = "collect", ncol = 3) & theme(legend.position = "bottom")
+  
+  # save plot ---------------------------------------------------------------
+  figura <- here::here("figuras", "fig_05_mapa_insuficiencia_ens_medio.png")
+  
+  ggsave(plot = p, filename = figura, 
+         width = 16, height = 17, units = "cm", dpi = 300, scale=1.4)
+  
+  return(figura)
+}
+
+
 mapear_cidade <- function(cidade, hexgrid, limite,
                           insuf_hex, li = "pop_li_15", 
                           max_pop = 500, titulo = NULL) {

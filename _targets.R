@@ -18,6 +18,7 @@ suppressPackageStartupMessages({
   library(forcats)
   library(sf)
   library(ggspatial)
+  library(ggalt)
   library(scales)
   library(patchwork)
   library(h3jsr)
@@ -54,11 +55,15 @@ list(
   tar_target(acessibilidade_por_hex, download_acessibilidade()),
   tar_target(insuficiencia_ens_infantil_por_hex, calcular_insuficiencia_ens_infantil_por_hex(pop_mat_por_hex, acessibilidade_por_hex)),
   tar_target(insuficiencia_ens_infantil_por_cidade, calcular_insuficiencia_ens_infantil_por_cidade(insuficiencia_ens_infantil_por_hex)),
+  tar_target(insuficiencia_ens_medio_por_hex, calcular_insuficiencia_ens_medio_por_hex(pop_mat_por_hex, acessibilidade_por_hex)),
+  tar_target(insuficiencia_ens_medio_por_cidade, calcular_insuficiencia_ens_medio_por_cidade(insuficiencia_ens_medio_por_hex)),
   
   # tabelas, figuras e mapas para o relatório
   tar_target(figura_cobertura_de_vagas, plotar_cobertura_de_vagas(cobertura_de_vagas, pop_por_decil), format = "file"),
   tar_target(figura_insuficiencia_ens_infantil, plotar_insuficiencia_ens_infantil(insuficiencia_ens_infantil_por_cidade), format = "file"),
-  tar_target(mapa_insuficiencia_ens_infantil, mapear_insuficiencia_ens_infantil(hexgrid, limites_municipais, insuficiencia_ens_infantil_por_hex), format = "file")
+  tar_target(mapa_insuficiencia_ens_infantil, mapear_insuficiencia_ens_infantil(hexgrid, limites_municipais, insuficiencia_ens_infantil_por_hex), format = "file"),
+
+  tar_target(figura_insuficiencia_ens_medio, plotar_insuficiencia_ens_medio(insuficiencia_ens_medio_por_cidade), format = "file")
   
 )
 

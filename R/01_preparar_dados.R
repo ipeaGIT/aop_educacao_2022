@@ -135,8 +135,7 @@ download_acessibilidade <- function() {
                                geometry = FALSE, year = 2019, showProgress = FALSE)
 
   # extrair dados dos hexágonos
-  hex_data <- data_walk |>  select(id_hex, abbrev_muni, name_muni = name_muni.x, 
-                                   code_muni = code_muni.x) |> 
+  hex_data <- data_walk |>  select(id_hex, abbrev_muni, name_muni, code_muni) |> 
     distinct()
   
   # escola de educação infantil mais próxima, a pé
@@ -144,11 +143,20 @@ download_acessibilidade <- function() {
     drop_na() |> 
     distinct()
   
+  # baixar dados do aopdata - transporte público, horário de pico (6am - 8am)
+  data_pt <- aopdata::read_access(city=c("bho", "cam", "for", "goi", "poa", "rec", "rio", "spo"), 
+                                  mode = "public_transport", peak = TRUE,
+                                  geometry = FALSE, year = 2019, showProgress = FALSE)
+  
+  cma_medio_tp <- data_pt |> select(id_hex, CMAEM30) |> 
+    drop_na() |> 
+    distinct()
+  
   # join entre os dados dos hexágonos e de acessibilidade
   data_processed <- hex_data |> 
     left_join(tmi_infantil_caminhada, by = "id_hex") |> 
-    drop_na()
-  
+    left_join(cma_medio_tp, by = "id_hex") 
+
   return(data_processed)
 }
 
@@ -184,4 +192,39 @@ calcular_insuficiencia_ens_infantil_por_cidade <- function(insuficiencia_ens_inf
 }
   
 
+# Ensino Médio ------------------------------------------------------------
 
+# pop_mat_por_hex <- tar_read(pop_mat_por_hex)
+# acessibilidade_por_hex <- tar_read(acessibilidade_por_hex)
+calcular_insuficiencia_ens_medio_por_hex <- function(pop_mat_por_hex, acessibilidade_por_hex) {
+  pop_df <- pop_mat_por_hex |> filter(idade == "15a18", populacao > 0, renda_decil <= 5)
+  acessibilidade_df <- left_join(pop_df, acessibilidade_por_hex, by = c("id_hex", "abbrev_muni", "name_muni", "code_muni"))
+  
+  # filtrar cidades com transporte público
+  acessibilidade_df <- acessibilidade_df |> filter(abbrev_muni %in% c("bho", "cam", "for", "goi", "poa", "rec", "rio", "spo"))
+  
+  acessibilidade_df <- acessibilidade_df |> 
+    select(-TMIEI) |> 
+    drop_na() |> 
+    mutate(pop_li_0 = if_else(CMAEM30 <= 0, populacao, 0L),
+           pop_li_1 = if_else(CMAEM30 <= 1, populacao, 0L),
+           pop_li_3 = if_else(CMAEM30 <= 3, populacao, 0L))
+
+  return(acessibilidade_df)
+}
+
+# insuficiencia_ens_medio_por_hex <- tar_read(insuficiencia_ens_medio_por_hex)
+calcular_insuficiencia_ens_medio_por_cidade <- function(insuficiencia_ens_medio_por_hex) {
+  acessibilidade_df <- insuficiencia_ens_medio_por_hex |> 
+    group_by(abbrev_muni, name_muni, code_muni, idade, nivel_ensino) |> 
+    summarise(populacao = sum(populacao),
+              li_0 = sum(pop_li_0),
+              li_1 = sum(pop_li_1),
+              li_3 = sum(pop_li_3),
+              .groups = "drop") |> 
+    mutate(li_0_pc = li_0 / populacao,
+           li_1_pc = li_1 / populacao,
+           li_3_pc = li_3 / populacao)
+  
+  return(acessibilidade_df)
+}

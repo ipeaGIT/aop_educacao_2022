@@ -1,3 +1,7 @@
+
+# Cobertura de vagas ------------------------------------------------------
+
+
 # cobertura_de_vagas <- tar_read(cobertura_de_vagas)
 # pop_por_decil <- tar_read(pop_por_decil)
 plotar_cobertura_de_vagas <- function(cobertura_de_vagas, pop_por_decil) {
@@ -25,13 +29,17 @@ plotar_cobertura_de_vagas <- function(cobertura_de_vagas, pop_por_decil) {
     facet_wrap(~nivel_ensino)
     
     
-  # save plot ---------------------------------------------------------------
+  # save plot
   figura <- here::here("figuras", "fig_01_cobertura_de_vagas.png")
   
   ggsave(plot = p, filename = figura, width = 16, height = 12, units = "cm", dpi = 300)
   
   return(figura)
 }
+
+
+# Ensino Infantil ---------------------------------------------------------
+
 
 # insuficiencia_ens_infantil_por_cidade <- tar_read(insuficiencia_ens_infantil_por_cidade)
 plotar_insuficiencia_ens_infantil <- function(insuficiencia_ens_infantil_por_cidade) {
@@ -58,7 +66,7 @@ plotar_insuficiencia_ens_infantil <- function(insuficiencia_ens_infantil_por_cid
               label = "15 minutos", fontface = "bold",
               color = "steelblue4",
               vjust = -1) +
-    labs(title = "% de crianças de 0 a 5 anos de idade a mais de 15 e 30 min de\ncaminhada de uma escola de educação infantil",
+    labs(#title = "% de crianças de 0 a 5 anos de idade a mais de 15 e 30 min de\ncaminhada de uma escola de educação infantil",
          # caption = "(50% das famílias mais pobres em cada cidade)",
          y=NULL,
          x="Proporção de crianças de baixa renda com acessibilidade insuficiente", # "% de crianças atendidas",
@@ -68,12 +76,65 @@ plotar_insuficiencia_ens_infantil <- function(insuficiencia_ens_infantil_por_cid
           strip.text = element_text(face = "bold"),
           legend.position = "bottom")
   
-  # save plot ---------------------------------------------------------------
+  # save plot
   figura <- here::here("figuras", "fig_02_insuficiencia_ens_infantil.png")
   
   ggsave(plot = p, filename = figura, 
          width = 16, height = 13, units = "cm", dpi = 300, scale=1.3)
 
+  return(figura)
+  
+}
+
+
+
+# Ensino Médio ------------------------------------------------------------
+
+# insuficiencia_ens_medio_por_cidade <- tar_read(insuficiencia_ens_medio_por_cidade)
+plotar_insuficiencia_ens_medio <- function(insuficiencia_ens_medio_por_cidade) {
+  
+  muni_order <- insuficiencia_ens_medio_por_cidade %>%
+    arrange(desc(li_0_pc)) |> 
+    pull(name_muni)
+  
+  summary_df <- insuficiencia_ens_medio_por_cidade |> 
+    mutate(name_muni = factor(name_muni, levels = muni_order))
+  
+  p <- summary_df |> 
+    ggplot(aes(y=name_muni)) +
+    geom_dumbbell(aes(x = li_0_pc, xend = li_3_pc), 
+                         size=3, color="gray80", alpha=.8, colour_x = "steelblue4", colour_xend = "springgreen4") +
+    geom_point(aes(x=li_1_pc), color = "black", size = 3) +
+    scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.1), labels=paste0(seq(0, 100, 10), "%")) +
+    geom_text(data = filter(summary_df, abbrev_muni == "rio"),
+              aes(x = li_3_pc, y = name_muni),
+              label = "3 escolas", fontface = "bold",
+              color = "springgreen4",
+              vjust = -1) +
+    geom_text(data = filter(summary_df, abbrev_muni == "rio"),
+              aes(x = li_1_pc, y = name_muni),
+              label = "1 escola", fontface = "bold",
+              color = "black",
+              vjust = -1) +
+    geom_text(data = filter(summary_df, abbrev_muni == "rio"),
+              aes(x = li_0_pc, y = name_muni),
+              label = "0 escolas", fontface = "bold",
+              color = "steelblue4",
+              vjust = -1) +
+    labs(y=NULL,
+         x="Proporção de jovens de baixa renda com acessibilidade insuficiente", # "% de crianças atendidas",
+         color = NULL) +
+    theme_minimal() +
+    theme(panel.border = element_rect(fill = NA, color = "grey40"),
+          strip.text = element_text(face = "bold"),
+          legend.position = "bottom")
+  
+  # save plot
+  figura <- here::here("figuras", "fig_04_insuficiencia_ens_medio.png")
+  
+  ggsave(plot = p, filename = figura, 
+         width = 16, height = 8, units = "cm", dpi = 300, scale=1.3)
+  
   return(figura)
   
 }
