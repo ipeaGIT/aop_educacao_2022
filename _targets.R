@@ -15,6 +15,12 @@ suppressPackageStartupMessages({
   library(tidyr)
   library(stringr)
   library(ggplot2)
+  library(forcats)
+  library(sf)
+  library(ggspatial)
+  library(scales)
+  library(patchwork)
+  library(h3jsr)
 })
 
 # Set target options:
@@ -38,15 +44,21 @@ tar_source()
 list(
   
   # preparação dos dados
+  tar_target(hexgrid, download_hexgrid()),
+  tar_target(limites_municipais, download_limites_municipais()),
   tar_target(pop_mat_por_hex, download_uso_do_solo()),
   tar_target(pop_mat_por_cidade, agregar_uso_do_solo_por_cidade(pop_mat_por_hex)),
   tar_target(pop_por_decil, agregar_populacao_por_decil(pop_mat_por_hex)),
   tar_target(cobertura_de_vagas, calcular_cobertura_de_vagas(pop_mat_por_cidade)),
   
+  tar_target(acessibilidade_por_hex, download_acessibilidade()),
+  tar_target(insuficiencia_ens_infantil_por_hex, calcular_insuficiencia_ens_infantil_por_hex(pop_mat_por_hex, acessibilidade_por_hex)),
+  tar_target(insuficiencia_ens_infantil_por_cidade, calcular_insuficiencia_ens_infantil_por_cidade(insuficiencia_ens_infantil_por_hex)),
   
   # tabelas, figuras e mapas para o relatório
-  
-  tar_target(figura_cobertura_de_vagas, plotar_cobertura_de_vagas(cobertura_de_vagas, pop_por_decil), format = "file")
+  tar_target(figura_cobertura_de_vagas, plotar_cobertura_de_vagas(cobertura_de_vagas, pop_por_decil), format = "file"),
+  tar_target(figura_insuficiencia_ens_infantil, plotar_insuficiencia_ens_infantil(insuficiencia_ens_infantil_por_cidade), format = "file"),
+  tar_target(mapa_insuficiencia_ens_infantil, mapear_insuficiencia_ens_infantil(hexgrid, limites_municipais, insuficiencia_ens_infantil_por_hex), format = "file")
   
 )
 
