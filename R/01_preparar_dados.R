@@ -7,7 +7,17 @@ download_hexgrid <- function() {
   # baixar dados do aopdata
   data <- aopdata::read_grid(city="all", showProgress = FALSE)
   
-  return(data)
+  data_recoded <- data |> 
+    mutate(name_muni = recode(name_muni, 
+                              "Goiania" = "RM Goiânia",
+                              "Belem" = "Belém",
+                              "Brasilia" = "Brasília",
+                              "Maceio" = "Maceió",
+                              "Sao Goncalo" = "São Gonçalo",
+                              "Sao Luis" = "São Luís",
+                              "Sao Paulo" = "São Paulo"))
+
+  return(data_recoded)
 }
 
 
@@ -65,9 +75,18 @@ download_uso_do_solo <- function() {
     left_join(mat_data, by = c("id_hex", "idade")) |> 
     filter(populacao + matriculas > 0)
   
-  
+  data_recoded <- data_processed |> 
+    mutate(name_muni = recode(name_muni, 
+                              "Goiania" = "RM Goiânia",
+                              "Belem" = "Belém",
+                              "Brasilia" = "Brasília",
+                              "Maceio" = "Maceió",
+                              "Sao Goncalo" = "São Gonçalo",
+                              "Sao Luis" = "São Luís",
+                              "Sao Paulo" = "São Paulo"))
+
   # retorna o data.frame processado, em formato longo
-  return(data_processed)
+  return(data_recoded)
 }
 
 # data <- tar_read(pop_mat_por_hex)
@@ -157,7 +176,17 @@ download_acessibilidade <- function() {
     left_join(tmi_infantil_caminhada, by = "id_hex") |> 
     left_join(cma_medio_tp, by = "id_hex") 
 
-  return(data_processed)
+  data_recoded <- data_processed |> 
+    mutate(name_muni = recode(name_muni, 
+                              "Goiania" = "RM Goiânia",
+                              "Belem" = "Belém",
+                              "Brasilia" = "Brasília",
+                              "Maceio" = "Maceió",
+                              "Sao Goncalo" = "São Gonçalo",
+                              "Sao Luis" = "São Luís",
+                              "Sao Paulo" = "São Paulo"))
+  
+  return(data_recoded)
 }
 
 # Ensino Infantil ---------------------------------------------------------

@@ -13,6 +13,7 @@ suppressPackageStartupMessages({
   library(data.table)
   library(dplyr)
   library(tidyr)
+  library(readr)
   library(stringr)
   library(ggplot2)
   library(forcats)
@@ -22,6 +23,8 @@ suppressPackageStartupMessages({
   library(scales)
   library(patchwork)
   library(h3jsr)
+  library(knitr)
+  library(kableExtra)
 })
 
 # Set target options:
@@ -59,11 +62,16 @@ list(
   tar_target(insuficiencia_ens_medio_por_cidade, calcular_insuficiencia_ens_medio_por_cidade(insuficiencia_ens_medio_por_hex)),
   
   # tabelas, figuras e mapas para o relatório
+  tar_target(tabela_renda_media, criar_tabela_renda_media(), format = "file"),
+  tar_target(tabela_escolas, criar_tabela_escolas(), format = "file"),
+  tar_target(tabela_matriculas, criar_tabela_matriculas(), format = "file"),
+  
   tar_target(figura_cobertura_de_vagas, plotar_cobertura_de_vagas(cobertura_de_vagas, pop_por_decil), format = "file"),
   tar_target(figura_insuficiencia_ens_infantil, plotar_insuficiencia_ens_infantil(insuficiencia_ens_infantil_por_cidade), format = "file"),
   tar_target(mapa_insuficiencia_ens_infantil, mapear_insuficiencia_ens_infantil(hexgrid, limites_municipais, insuficiencia_ens_infantil_por_hex), format = "file"),
 
-  tar_target(figura_insuficiencia_ens_medio, plotar_insuficiencia_ens_medio(insuficiencia_ens_medio_por_cidade), format = "file")
+  tar_target(figura_insuficiencia_ens_medio, plotar_insuficiencia_ens_medio(insuficiencia_ens_medio_por_cidade), format = "file"),
+  tar_target(mapa_insuficiencia_ens_medio, mapear_insuficiencia_ens_medio(hexgrid, limites_municipais, insuficiencia_ens_medio_por_hex), format = "file")
   
 )
 

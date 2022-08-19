@@ -1,3 +1,7 @@
+
+# Ensino Infantil ---------------------------------------------------------
+
+
 # hexgrid <- tar_read(hexgrid)
 # insuficiencia_ens_infantil_por_hex <- tar_read(insuficiencia_ens_infantil_por_hex)
 # limites_municipais <- tar_read(limites_municipais)
@@ -37,17 +41,20 @@ mapear_insuficiencia_ens_infantil <- function(hexgrid, limites_municipais, insuf
                             li = "pop_li_30", max_pop = max_pop, titulo = NULL)
   
   p <- m_rec_15 + m_rec_30 + m_poa_15 + m_poa_30 + m_slz_15 + m_slz_30 +
-    plot_annotation(title = "Crianças de 0 a 5 anos de idade a mais de 15 ou 30 minutos\nde caminhada da creche mais próxima") +
+    # plot_annotation(title = "Crianças de 0 a 5 anos de idade a mais de 15 ou 30 minutos\nde caminhada da creche mais próxima") +
     plot_layout(guides = "collect", ncol = 2) & theme(legend.position = "bottom")
   
-  # save plot ---------------------------------------------------------------
-  figura <- here::here("figuras", "fig_03_mapa_insuficiencia_ens_infantil.png")
+  # save plot
+  figura <- here::here("output", "fig_03_mapa_insuficiencia_ens_infantil.png")
   
   ggsave(plot = p, filename = figura, 
          width = 16, height = 17, units = "cm", dpi = 300, scale=1.4)
 
   return(figura)
 }
+
+
+# Ensino Médio ------------------------------------------------------------
 
 
 # hexgrid <- tar_read(hexgrid)
@@ -105,17 +112,20 @@ mapear_insuficiencia_ens_medio <- function(hexgrid, limites_municipais, insufici
   p <- m_for_0 + m_for_1 + m_for_3 + 
     m_bho_0 + m_bho_1 + m_bho_3 +
     m_poa_0 + m_poa_1 + m_poa_3 +
-    plot_annotation(title = "Jovens de 15 a 18 anos de idade com acesso a até 0, 1 ou 3 escolas em 30 minutos de viagem por transporte público") +
+    # plot_annotation(title = "Jovens de 15 a 18 anos de idade com acesso a até 0, 1 ou 3 escolas em 30 minutos de viagem por transporte público") +
     plot_layout(guides = "collect", ncol = 3) & theme(legend.position = "bottom")
   
-  # save plot ---------------------------------------------------------------
-  figura <- here::here("figuras", "fig_05_mapa_insuficiencia_ens_medio.png")
+  # save plot
+  figura <- here::here("output", "fig_05_mapa_insuficiencia_ens_medio.png")
   
   ggsave(plot = p, filename = figura, 
          width = 16, height = 17, units = "cm", dpi = 300, scale=1.4)
   
   return(figura)
 }
+
+
+# Mapa por Cidade ---------------------------------------------------------
 
 
 mapear_cidade <- function(cidade, hexgrid, limite,
@@ -156,11 +166,12 @@ mapear_cidade <- function(cidade, hexgrid, limite,
     # geom_sf(data=filter(pop_grid, pop == 0), fill="grey95", color="grey70", size = 0.1) +
     geom_sf(aes(fill=pop), color=NA) +
     geom_sf(data = limite, fill = NA, color = "grey60", size = 0.5) +
-    geom_sf(data=filter(pop_grid, matriculas > 0), fill=muted("blue"), color="grey70", size = 0.05) +
+    geom_sf(data=filter(pop_grid, matriculas > 0), fill="steelblue4", color="steelblue4", size = 0.05) +
     coord_sf(datum = NA,
              xlim = c(b_box["xmin"], b_box["xmax"]),
              ylim = c(b_box["ymin"], b_box["ymax"])) +
-    scale_fill_distiller(palette = "Reds", direction = 1, limits = c(0, max_pop)) +
+    # scale_fill_distiller(palette = "OrRd", direction = 1, limits = c(1, max_pop)) +
+    scale_fill_viridis_c(option = "inferno", limits = c(1, max_pop), begin = 0.1, end = 0.9, direction = -1) +
     labs(fill = "Número\nde crianças",
          subtitle = titulo) +
     theme_void() +
