@@ -48,7 +48,7 @@ mapear_insuficiencia_ens_infantil <- function(hexgrid, limites_municipais, insuf
   figura <- here::here("output", "fig_03_mapa_insuficiencia_ens_infantil.png")
   
   ggsave(plot = p, filename = figura, 
-         width = 16, height = 17, units = "cm", dpi = 300, scale=1.4)
+         width = 16, height = 17, units = "cm", dpi = 300, scale=1.2)
 
   return(figura)
 }
@@ -119,7 +119,7 @@ mapear_insuficiencia_ens_medio <- function(hexgrid, limites_municipais, insufici
   figura <- here::here("output", "fig_05_mapa_insuficiencia_ens_medio.png")
   
   ggsave(plot = p, filename = figura, 
-         width = 16, height = 17, units = "cm", dpi = 300, scale=1.4)
+         width = 16, height = 17, units = "cm", dpi = 300, scale=1.2)
   
   return(figura)
 }
@@ -171,7 +171,7 @@ mapear_cidade <- function(cidade, hexgrid, limite,
              xlim = c(b_box["xmin"], b_box["xmax"]),
              ylim = c(b_box["ymin"], b_box["ymax"])) +
     # scale_fill_distiller(palette = "OrRd", direction = 1, limits = c(1, max_pop)) +
-    scale_fill_viridis_c(option = "inferno", limits = c(1, max_pop), begin = 0.1, end = 0.9, direction = -1) +
+    scale_fill_viridis_c(option = "inferno", limits = c(0, max_pop), begin = 0.1, end = 0.9, direction = -1) +
     labs(fill = "Número\nde crianças",
          subtitle = titulo) +
     theme_void() +

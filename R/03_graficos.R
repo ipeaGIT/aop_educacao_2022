@@ -11,6 +11,18 @@ plotar_cobertura_de_vagas <- function(cobertura_de_vagas, pop_por_decil) {
   pop_por_decil$name_muni <- factor(pop_por_decil$name_muni, 
                                     levels = levels(cobertura_de_vagas$name_muni))
   
+  pop_por_decil$idade <- factor(pop_por_decil$idade,
+                                levels = c("0a5", "6a14", "15a18"),
+                                labels = c("0 a 5 anos de idade",
+                                           "6 a 14 anos de idade",
+                                           "15 a 18 anos de idade"))
+  
+  cobertura_de_vagas$idade <- factor(cobertura_de_vagas$idade,
+                                     levels = c("0a5", "6a14", "15a18"),
+                                     labels = c("0 a 5 anos de idade",
+                                                "6 a 14 anos de idade",
+                                                "15 a 18 anos de idade"))
+  
   p <- cobertura_de_vagas |> 
     ggplot(aes(x=name_muni)) +
     geom_col(data=pop_por_decil, aes(fill=renda_decil, y=proporcao)) +
@@ -25,16 +37,16 @@ plotar_cobertura_de_vagas <- function(cobertura_de_vagas, pop_por_decil) {
          fill = "Decil de renda") +
     theme_minimal() +
     theme(panel.border = element_rect(fill = NA, color = "grey40"),
-          strip.text = element_text(face = "bold"),
+          strip.text = element_text(face = "bold", margin = margin(0,0,0.1,0, "cm")),
           legend.position = "bottom",
           legend.key.size = unit(0.4, "cm"),
           panel.spacing = unit(0.6, "lines")) +
-    facet_wrap(~nivel_ensino)
-    
+    facet_wrap(~nivel_ensino + idade)
+
   # save plot
   figura <- here::here("output", "fig_01_cobertura_de_vagas.png")
   
-  ggsave(plot = p, filename = figura, width = 16, height = 12, units = "cm", dpi = 300)
+  ggsave(plot = p, filename = figura, width = 16, height = 13, units = "cm", dpi = 300)
   
   return(figura)
 }
@@ -82,7 +94,7 @@ plotar_insuficiencia_ens_infantil <- function(insuficiencia_ens_infantil_por_cid
   figura <- here::here("output", "fig_02_insuficiencia_ens_infantil.png")
   
   ggsave(plot = p, filename = figura, 
-         width = 16, height = 13, units = "cm", dpi = 300, scale=1.3)
+         width = 16, height = 13, units = "cm", dpi = 300, scale=1.1)
 
   return(figura)
   
@@ -135,7 +147,7 @@ plotar_insuficiencia_ens_medio <- function(insuficiencia_ens_medio_por_cidade) {
   figura <- here::here("output", "fig_04_insuficiencia_ens_medio.png")
   
   ggsave(plot = p, filename = figura, 
-         width = 16, height = 7, units = "cm", dpi = 300, scale=1.3)
+         width = 16, height = 7, units = "cm", dpi = 300, scale=1.1)
   
   return(figura)
   
