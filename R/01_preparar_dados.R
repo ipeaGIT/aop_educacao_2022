@@ -163,7 +163,7 @@ download_acessibilidade <- function() {
     distinct()
   
   # baixar dados do aopdata - transporte público, horário de pico (6am - 8am)
-  data_pt <- aopdata::read_access(city=c("bho", "cam", "for", "goi", "poa", "rec", "rio", "spo"), 
+  data_pt <- aopdata::read_access(city=c("bho", "cam", "for", "goi", "poa", "rec", "rio", "spo", "cur"), 
                                   mode = "public_transport", peak = TRUE,
                                   geometry = FALSE, year = 2019, showProgress = FALSE)
   
@@ -230,7 +230,7 @@ calcular_insuficiencia_ens_medio_por_hex <- function(pop_mat_por_hex, acessibili
   acessibilidade_df <- left_join(pop_df, acessibilidade_por_hex, by = c("id_hex", "abbrev_muni", "name_muni", "code_muni"))
   
   # filtrar cidades com transporte público
-  acessibilidade_df <- acessibilidade_df |> filter(abbrev_muni %in% c("bho", "cam", "for", "goi", "poa", "rec", "rio", "spo"))
+  acessibilidade_df <- acessibilidade_df |> filter(abbrev_muni %in% c("bho", "cam", "for", "goi", "poa", "rec", "rio", "spo", "cur"))
   
   acessibilidade_df <- acessibilidade_df |> 
     select(-TMIEI) |> 
