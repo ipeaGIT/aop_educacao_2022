@@ -77,7 +77,7 @@ mapear_insuficiencia_ens_medio <- function(hexgrid, limites_municipais, insufici
   m_for_1 <- mapear_cidade(cidade = "for", hexgrid = hexgrid, limite = limites_municipais,
                            insuf_hex = insuficiencia_ens_medio_por_hex, 
                            li = "pop_li_1", max_pop = max_pop,
-                           titulo = "Linha de Insuficiência: 1 escolas")
+                           titulo = "Linha de Insuficiência: 1 escola")
 
   m_for_3 <- mapear_cidade(cidade = "for", hexgrid = hexgrid, limite = limites_municipais,
                            insuf_hex = insuficiencia_ens_medio_por_hex, 
@@ -127,7 +127,13 @@ mapear_insuficiencia_ens_medio <- function(hexgrid, limites_municipais, insufici
 
 # Mapa por Cidade ---------------------------------------------------------
 
-
+# cidade = "rec"
+# hexgrid = hexgrid
+# limite = limites_municipais
+# insuf_hex = insuficiencia_ens_infantil_por_hex
+# li = "pop_li_15"
+# max_pop = 305L
+# titulo = "Linha de Insuficiência: 15 minutos"
 mapear_cidade <- function(cidade, hexgrid, limite,
                           insuf_hex, li = "pop_li_15", 
                           max_pop = 500, titulo = NULL) {
@@ -141,6 +147,12 @@ mapear_cidade <- function(cidade, hexgrid, limite,
   # juntar grid espacial e dados de insuficiencia de acessibilidade
   pop_grid <- inner_join(grid, insuf_df, by = c("id_hex", "abbrev_muni", "name_muni", "code_muni")) |> 
     mutate(pop = get(li))
+  
+  # transformar escolas em pontos
+  schools_points <- pop_grid |> 
+    filter(matriculas > 0) |>
+    mutate(escolas = "1") |> 
+    st_centroid()
   
   # calcular centroide da cidade, para centralizar o mapa
   points <- h3_to_point(pop_grid$id_hex, simple = F)
@@ -166,13 +178,16 @@ mapear_cidade <- function(cidade, hexgrid, limite,
     # geom_sf(data=filter(pop_grid, pop == 0), fill="grey95", color="grey70", size = 0.1) +
     geom_sf(aes(fill=pop), color=NA) +
     geom_sf(data = limite, fill = NA, color = "grey60", size = 0.5) +
-    geom_sf(data=filter(pop_grid, matriculas > 0), fill="steelblue4", color="steelblue4", size = 0.05) +
+    # geom_sf(data=filter(pop_grid, matriculas > 0), fill="steelblue4", color="steelblue4", size = 0.05) +
+    geom_sf(data = schools_points, aes(color = escolas), size = 0.8) +
     coord_sf(datum = NA,
              xlim = c(b_box["xmin"], b_box["xmax"]),
              ylim = c(b_box["ymin"], b_box["ymax"])) +
-    # scale_fill_distiller(palette = "OrRd", direction = 1, limits = c(1, max_pop)) +
     scale_fill_viridis_c(option = "inferno", limits = c(0, max_pop), begin = 0.1, end = 0.9, direction = -1) +
+    scale_color_manual(values = "steelblue4") +
+    guides(color = guide_legend(label = FALSE)) +
     labs(fill = "Número\nde crianças",
+         color = "Escolas",
          subtitle = titulo) +
     theme_void() +
     theme(legend.position = "bottom",
@@ -181,5 +196,6 @@ mapear_cidade <- function(cidade, hexgrid, limite,
              label = centroid_sf$name_muni[[1]]) +
     annotation_scale(location = "br", width_hint = 0.5, style = "ticks")
   
+  p
   return(p)
 }
