@@ -42,7 +42,7 @@ mapear_insuficiencia_ens_infantil <- function(hexgrid, limites_municipais, insuf
   
   p <- m_rec_15 + m_rec_30 + m_poa_15 + m_poa_30 + m_slz_15 + m_slz_30 +
     # plot_annotation(title = "Crianças de 0 a 5 anos de idade a mais de 15 ou 30 minutos\nde caminhada da creche mais próxima") +
-    plot_layout(guides = "collect", ncol = 2) & theme(legend.position = "bottom")
+    plot_layout(ncol = 2, guides = "collect") & theme(legend.position = "bottom")
   
   # save plot
   figura <- here::here("output", "fig_03_mapa_insuficiencia_ens_infantil.png")
@@ -113,7 +113,7 @@ mapear_insuficiencia_ens_medio <- function(hexgrid, limites_municipais, insufici
     m_bho_0 + m_bho_1 + m_bho_3 +
     m_poa_0 + m_poa_1 + m_poa_3 +
     # plot_annotation(title = "Jovens de 15 a 18 anos de idade com acesso a até 0, 1 ou 3 escolas em 30 minutos de viagem por transporte público") +
-    plot_layout(guides = "collect", ncol = 3) & theme(legend.position = "bottom")
+    plot_layout(ncol = 3, guides = "collect") & theme(legend.position = "bottom")
   
   # save plot
   figura <- here::here("output", "fig_05_mapa_insuficiencia_ens_medio.png")

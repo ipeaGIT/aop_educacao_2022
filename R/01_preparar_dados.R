@@ -221,6 +221,37 @@ calcular_insuficiencia_ens_infantil_por_cidade <- function(insuficiencia_ens_inf
 }
   
 
+# Ensino Fundamental ------------------------------------------------------
+
+# pop_mat_por_hex <- tar_read(pop_mat_por_hex)
+# acessibilidade_por_hex <- tar_read(acessibilidade_por_hex)
+calcular_insuficiencia_ens_fundamental_por_hex <- function(pop_mat_por_hex, acessibilidade_por_hex) {
+  pop_df <- pop_mat_por_hex |> filter(idade == "6a14", populacao > 0, renda_decil <= 5)
+  acessibilidade_df <- left_join(pop_df, acessibilidade_por_hex, by = c("id_hex", "abbrev_muni", "name_muni", "code_muni"))
+  
+  acessibilidade_df <- acessibilidade_df |> 
+    replace_na(list(TMIEI = Inf)) |> 
+    mutate(pop_li_15 = if_else(TMIEI > 15, populacao, 0L),
+           pop_li_30 = if_else(TMIEI > 30, populacao, 0L))
+  
+  
+  return(acessibilidade_df)
+}
+
+# insuficiencia_ens_fundamental_por_hex <- tar_read(insuficiencia_ens_fundamental_por_hex)
+calcular_insuficiencia_ens_fundamental_por_cidade <- function(insuficiencia_ens_fundamental_por_hex) {
+  acessibilidade_df <- insuficiencia_ens_fundamental_por_hex |> 
+    group_by(abbrev_muni, name_muni, code_muni, idade, nivel_ensino) |> 
+    summarise(populacao = sum(populacao),
+              li_15 = sum(pop_li_15),
+              li_30 = sum(pop_li_30),
+              .groups = "drop") |> 
+    mutate(li_15_pc = li_15 / populacao,
+           li_30_pc = li_30 / populacao)
+  
+  return(acessibilidade_df)
+}
+
 # Ensino Médio ------------------------------------------------------------
 
 # pop_mat_por_hex <- tar_read(pop_mat_por_hex)

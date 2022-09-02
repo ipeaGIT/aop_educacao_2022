@@ -1,3 +1,37 @@
+# insuf_infantil <- tar_read(insuficiencia_ens_infantil_por_cidade)
+# insuf_fundamental <- tar_read(insuficiencia_ens_fundamental_por_cidade)
+# insuf_medio <- tar_read(insuficiencia_ens_medio_por_cidade)
+criar_tabela_geral_insuficiencia <- function(insuf_infantil, insuf_fundamental, insuf_medio) {
+  infantil_df <- insuf_infantil |> 
+    select(name_muni, nivel_ensino, populacao, li_15_pc, li_30_pc)
+
+  fundamental_df <- insuf_fundamental |> 
+    select(name_muni, nivel_ensino, populacao, li_15_pc, li_30_pc)
+
+  medio_df <- insuf_medio |> 
+    select(name_muni, nivel_ensino, populacao, li_0_pc, li_1_pc, li_3_pc)
+  
+  geral_df <- 
+    left_join(infantil_df, fundamental_df, 
+              by = c("name_muni"),
+              suffix = c(".inf", ".fund")) |> 
+    left_join(medio_df,
+              by = c("name_muni"))
+  
+  geral_df <- geral_df |> 
+    mutate(across(contains("_pc"), scales::percent, accuracy = 0.1))
+  
+  tabela_md <- kable(geral_df, format = "markdown", digits = 1)
+  
+  # save table
+  txt_file <- here::here("output", "tab_3_insuficiecia_geral.md")
+  
+  save_kable(tabela_md, file = txt_file)
+  
+  return(txt_file)
+  
+}
+
 criar_tabela_renda_media <- function() {
   # baixar dados do aopdata
   data_df <- aopdata::read_landuse(city="all", geometry = FALSE)

@@ -58,10 +58,14 @@ list(
   tar_target(acessibilidade_por_hex, download_acessibilidade()),
   tar_target(insuficiencia_ens_infantil_por_hex, calcular_insuficiencia_ens_infantil_por_hex(pop_mat_por_hex, acessibilidade_por_hex)),
   tar_target(insuficiencia_ens_infantil_por_cidade, calcular_insuficiencia_ens_infantil_por_cidade(insuficiencia_ens_infantil_por_hex)),
+  tar_target(insuficiencia_ens_fundamental_por_hex, calcular_insuficiencia_ens_fundamental_por_hex(pop_mat_por_hex, acessibilidade_por_hex)),
+  tar_target(insuficiencia_ens_fundamental_por_cidade, calcular_insuficiencia_ens_fundamental_por_cidade(insuficiencia_ens_fundamental_por_hex)),
   tar_target(insuficiencia_ens_medio_por_hex, calcular_insuficiencia_ens_medio_por_hex(pop_mat_por_hex, acessibilidade_por_hex)),
   tar_target(insuficiencia_ens_medio_por_cidade, calcular_insuficiencia_ens_medio_por_cidade(insuficiencia_ens_medio_por_hex)),
   
   # tabelas, figuras e mapas para o relatório
+  
+  tar_target(tabela_insuficiencia, criar_tabela_geral_insuficiencia(insuficiencia_ens_infantil_por_cidade, insuficiencia_ens_fundamental_por_cidade, insuficiencia_ens_medio_por_cidade), format = "file"),
   tar_target(tabela_renda_media, criar_tabela_renda_media(), format = "file"),
   tar_target(tabela_escolas, criar_tabela_escolas(), format = "file"),
   tar_target(tabela_matriculas, criar_tabela_matriculas(), format = "file"),

@@ -5,7 +5,7 @@
 |bsb         |Brasília        |      254|         485|   103|   615|
 |cam         |Campinas        |      161|         198|   100|   369|
 |cgr         |Campo Grande    |      191|         148|    69|   272|
-|cur         |Curitiba        |      353|         334|   133|   565|
+|cur         |Curitiba        |        0|           0|     0|     0|
 |duq         |Duque de Caxias |      146|         204|    75|   251|
 |for         |Fortaleza       |      211|         352|   160|   453|
 |goi         |RM Goiânia      |      428|         484|   144|   728|
@@ -20,3 +20,4 @@
 |sgo         |São Gonçalo     |       74|         154|    64|   181|
 |slz         |São Luís        |       67|         153|    95|   272|
 |spo         |São Paulo       |      945|        1565|   661|  2632|
+|NA          |NA              |        0|           0|     0|     0|
