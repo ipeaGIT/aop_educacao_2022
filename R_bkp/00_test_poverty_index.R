@@ -9,6 +9,17 @@ library(scales)
 access_active_df <- aopdata::read_access(city="all", year = 2019)
 
 
+tar_load(acessibilidade_por_hex)
+tar_load(pop_mat_por_hex)
+
+access_df <- left_join(pop_mat_por_hex, acessibilidade_por_hex,
+                       by = c("id_hex", "abbrev_muni", "name_muni", "code_muni")) |> 
+  select(-matriculas, - CMAEM30) |> 
+  filter(renda_decil <= 5, renda_decil > 0)
+
+
+
+
 # cálculo do indíce P2 de pobreza de acessibilidade -----------------------------------------------
 
 ## preparação dos dados
@@ -51,7 +62,8 @@ P1 <- function(x, k, wt) {
   # infinite TMI means no opportunity was reached within the chosen max trip 
   # duration. thus, just change infinite values for the max TMI.
   x[is.infinite(x)] <- max(x[!is.infinite(x)], na.rm = T)
-
+  x[is.na(x)] <- max(x[!is.infinite(x) & !is.na(x)], na.rm = T)
+  
   # 1. calculate gap between TMI and threshold k
   gap <- x - k
   
@@ -72,9 +84,11 @@ P1 <- function(x, k, wt) {
 }
 
 P2 <- function(x, k, wt) {
-  # infinite TMI means no opportunity was reached within the chosen max trip 
+  # infinite or NA TMI means no opportunity was reached within the chosen max trip 
   # duration. thus, just change infinite values for the max TMI.
   x[is.infinite(x)] <- max(x[!is.infinite(x)], na.rm = T)
+  x[is.na(x)] <- max(x[!is.infinite(x) & !is.na(x)], na.rm = T)
+  
   
   # 1. calculate gap between TMI and threshold k
   gap <- x - k
@@ -99,19 +113,47 @@ P2 <- function(x, k, wt) {
 }
 
 
-setDT(geral_df)
+setDT(access_df)
 
-summary_df <- geral_df[, .(p0 = P0(TMIEI, 15, pop_criancas),
-                           p1 = P1(TMIEI, 15, pop_criancas),
-                           p2 = P2(TMIEI, 15, pop_criancas)), by = .(abbrev_muni, name_muni)]
 
-summary_df %>%
+# 15 minutes --------------------------------------------------------------
+
+
+
+summary_15_df <- access_df[, .(p0 = P0(TMIEI, 15, populacao),
+                            p1 = P1(TMIEI, 15, populacao),
+                            p2 = P2(TMIEI, 15, populacao)), by = .(abbrev_muni, name_muni, idade, nivel_ensino)]
+
+summary_15_df %>%
+  filter(idade == "0a5") |> 
+  mutate(name_muni = fct_reorder(name_muni, p0)) |> 
   pivot_longer(cols = starts_with("p"), names_to = "index") %>%
   ggplot() +
   geom_col(aes(x=name_muni, y=value, fill = index), position = "dodge") +
   coord_flip() +
-  facet_wrap(~index, scales = "free")
+  # scale_y_continuous(limits = c(0, 0.3)) +
+  facet_wrap(~index, scales = "free_x") +
+  labs(title = "TMI - 15 minutos") +
+  theme(legend.position = "none")
 
-summary_df %>%
-  select(starts_with("p")) %>%
-  cor(method = "spearman")
+
+
+# 30 minutes --------------------------------------------------------------
+
+
+summary_30_df <- access_df[, .(p0 = P0(TMIEI, 30, populacao),
+                            p1 = P1(TMIEI, 30, populacao),
+                            p2 = P2(TMIEI, 30, populacao)), by = .(abbrev_muni, name_muni, idade, nivel_ensino)]
+
+summary_30_df %>%
+  filter(idade == "0a5") |> 
+  mutate(name_muni = fct_reorder(name_muni, p0)) |> 
+  pivot_longer(cols = starts_with("p"), names_to = "index") %>%
+  ggplot() +
+  geom_col(aes(x=name_muni, y=value, fill = index), position = "dodge") +
+  coord_flip() +
+  # scale_y_continuous(limits = c(0, 0.3)) +
+  facet_wrap(~index, scales = "free_x") +
+  labs(title = "TMI - 30 minutos") +
+  theme(legend.position = "none")
+
