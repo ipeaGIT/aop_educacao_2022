@@ -5,6 +5,7 @@
 |Brasília        |infantil         |        133918|43.9%        |15.1%        |fundamental       |         222468|44.0%         |15.5%         |NA           |        NA|NA      |NA      |NA      |
 |Campinas        |infantil         |         44987|34.3%        |9.3%         |fundamental       |          79870|33.9%         |9.3%          |medio        |     37595|8.0%    |24.0%   |53.6%   |
 |Campo Grande    |infantil         |         40316|21.9%        |3.0%         |fundamental       |          63559|21.6%         |3.1%          |NA           |        NA|NA      |NA      |NA      |
+|Curitiba        |infantil         |         75739|11.8%        |1.9%         |fundamental       |         132231|11.7%         |1.9%          |medio        |     63175|4.6%    |14.0%   |46.5%   |
 |Duque de Caxias |infantil         |         45570|45.6%        |11.6%        |fundamental       |          82144|44.2%         |11.1%         |NA           |        NA|NA      |NA      |NA      |
 |Fortaleza       |infantil         |        116195|22.3%        |0.8%         |fundamental       |         200104|22.5%         |0.9%          |medio        |    100192|1.7%    |5.6%    |16.2%   |
 |RM Goiânia      |infantil         |        104855|37.6%        |10.1%        |fundamental       |         175799|37.0%         |10.0%         |medio        |     79186|22.7%   |42.3%   |74.3%   |
