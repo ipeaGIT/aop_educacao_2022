@@ -75,7 +75,14 @@ list(
   tar_target(mapa_insuficiencia_ens_infantil, mapear_insuficiencia_ens_infantil(hexgrid, limites_municipais, insuficiencia_ens_infantil_por_hex), format = "file"),
 
   tar_target(figura_insuficiencia_ens_medio, plotar_insuficiencia_ens_medio(insuficiencia_ens_medio_por_cidade), format = "file"),
-  tar_target(mapa_insuficiencia_ens_medio, mapear_insuficiencia_ens_medio(hexgrid, limites_municipais, insuficiencia_ens_medio_por_hex), format = "file")
+  tar_target(mapa_insuficiencia_ens_medio, mapear_insuficiencia_ens_medio(hexgrid, limites_municipais, insuficiencia_ens_medio_por_hex), format = "file"),
+  
+  tar_target(munis, lista_munis(pop_mat_por_hex)), 
+  tar_target(mapa_insuficiencia_ens_infantil_medio, 
+             mapear_insuficiencia_cidade(muni = munis, hexgrid, limites_municipais, 
+                                         insuficiencia_ens_infantil_por_hex, insuficiencia_ens_medio_por_hex), 
+             pattern = map(munis), format = "file")
+  
   
 )
 

@@ -142,6 +142,18 @@ calcular_cobertura_de_vagas <- function(data) {
    
 }
 
+# pop_mat_por_hex <- tar_read(pop_mat_por_hex)
+lista_munis <- function(pop_mat_por_hex) {
+  
+  munis <- pop_mat_por_hex |> 
+    select(abbrev_muni) |> 
+    distinct() |> 
+    pull()
+  
+  return(munis)
+  
+}
+
 
 
 
