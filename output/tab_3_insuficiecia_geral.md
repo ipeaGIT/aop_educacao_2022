@@ -20,3 +20,4 @@
 |São Gonçalo     |infantil         |         36865|59.5%        |16.8%        |fundamental       |          69179|59.6%         |16.5%         |NA           |        NA|NA      |NA      |NA      |
 |São Luís        |infantil         |         51362|58.9%        |25.2%        |fundamental       |          84395|58.2%         |24.2%         |NA           |        NA|NA      |NA      |NA      |
 |São Paulo       |infantil         |        510944|34.5%        |6.4%         |fundamental       |         899122|34.6%         |6.5%          |medio        |    398528|2.7%    |6.3%    |15.6%   |
+|Total           |infantil         |       2103360|34.2%        |7.9%         |fundamental       |        3651487|34.0%         |7.8%          |medio        |   1081652|6.7%    |16.2%   |37.4%   |

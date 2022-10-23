@@ -1,5 +1,5 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|106c66ab6ddb8470|||||||||||||||
+.Random.seed|object|1b26febd4494272c|||||||||||||||
 acessibilidade_por_hex|stem|2cae7598f1790854|34146d534678d69d|b79bb0332bcea496|1435642410||t19237.7254213236s|8dacfa205000a271|1313764|rds|local|vector|||63.719||
 agregar_populacao_por_decil|function|fc78a5a83f3cf423|||||||||||||||
 agregar_uso_do_solo_por_cidade|function|098ef32273019b03|||||||||||||||
@@ -12,7 +12,7 @@ calcular_insuficiencia_ens_medio_por_cidade|function|1f5dd2c87609c213|||||||||||
 calcular_insuficiencia_ens_medio_por_hex|function|f3e7323cda65e114|||||||||||||||
 cobertura_de_vagas|stem|aec20a0d11f1b714|f65aeda0709fcd39|528c85aff6325e9f|-1885326151||t19237.7255327144s|c56086d98179462e|1975|rds|local|vector|||0.013||
 criar_tabela_escolas|function|dfe871b28d59c986|||||||||||||||
-criar_tabela_geral_insuficiencia|function|4102c9cf9447fa63|||||||||||||||
+criar_tabela_geral_insuficiencia|function|e16f73d80c376ef7|||||||||||||||
 criar_tabela_matriculas|function|6130218dfea55f0d|||||||||||||||
 criar_tabela_renda_media|function|ed3f3767d441fade|||||||||||||||
 download_acessibilidade|function|8f9f4c130af8ed33|||||||||||||||
@@ -42,6 +42,6 @@ pop_mat_por_cidade|stem|ffb20d0ffa84a4f8|6de9bfee39376663|7a309ef2c7631df6|-2768
 pop_mat_por_hex|stem|ad9f5e462d50ef30|34e2e55fbb59fac5|8751b8012eb71ade|2075820631||t19237.7241366716s|74393ac6bfe716f2|625153|rds|local|vector|||12.331||
 pop_por_decil|stem|2020cd775c4703b6|d293665d3dd4d103|e0c748489c7521f0|-75503378||t19237.7255150289s|a6b8809c2c928132|9296|rds|local|vector|||0.126||
 tabela_escolas|stem|72be10ced6d1a1bc|ca3ff6e9d46d78c0|d7dbe60270754af8|2093654019|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_b1_qtd_escolas.md|t19237.7254518334s|f37ec1c8cd67f23d|1527|file|local|vector|||2.635||
-tabela_insuficiencia|stem|90c4284bd2f865c8|987116070c94fb3f|0e412f0633c7d8ab|44516349|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_3_insuficiecia_geral.md|t19237.7271168622s|3122296ed24e591b|4343|file|local|vector|||0.04||
+tabela_insuficiencia|stem|d14af4bd398190ff|987116070c94fb3f|2b3119899fe8b1a8|44516349|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_3_insuficiecia_geral.md|t19288.8025574s|d64e6cdbecbb63ca|4540|file|local|vector|||0.095||
 tabela_matriculas|stem|d2efaa29b9f5da8f|18a46c0ac2355937|2397de38306457ef|603287310|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_b2_qtd_matriculas.md|t19237.7255135011s|b344fe9624bddfd4|1593|file|local|vector|||3.112||
 tabela_renda_media|stem|084c015c11b5891a|87b50bc2f056450e|c4d0f32109ff8dd9|589031757|/mnt/repos/repos/git_marcus/aop_educacao_2022/output/tab_a1_renda_media.md|t19237.7254774357s|1cca554f0e92ae2a|1329|file|local|vector|||2.205||

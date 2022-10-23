@@ -2,6 +2,8 @@
 # insuf_fundamental <- tar_read(insuficiencia_ens_fundamental_por_cidade)
 # insuf_medio <- tar_read(insuficiencia_ens_medio_por_cidade)
 criar_tabela_geral_insuficiencia <- function(insuf_infantil, insuf_fundamental, insuf_medio) {
+  
+  # tabelas separadas por nível de ensino
   infantil_df <- insuf_infantil |> 
     select(name_muni, nivel_ensino, populacao, li_15_pc, li_30_pc)
 
@@ -11,6 +13,7 @@ criar_tabela_geral_insuficiencia <- function(insuf_infantil, insuf_fundamental, 
   medio_df <- insuf_medio |> 
     select(name_muni, nivel_ensino, populacao, li_0_pc, li_1_pc, li_3_pc)
   
+  # união das tabelas dos três níveis de ensino
   geral_df <- 
     left_join(infantil_df, fundamental_df, 
               by = c("name_muni"),
@@ -18,6 +21,33 @@ criar_tabela_geral_insuficiencia <- function(insuf_infantil, insuf_fundamental, 
     left_join(medio_df,
               by = c("name_muni"))
   
+  # cálculo dos valores totais
+  total_df <- geral_df |> 
+    summarise(name_muni = "Total",
+              nivel_ensino.inf = first(nivel_ensino.inf),
+              s_populacao.inf = sum(populacao.inf, na.rm = TRUE),
+              li_15_pc.inf = weighted.mean(li_15_pc.inf, populacao.inf, na.rm = TRUE),
+              li_30_pc.inf = weighted.mean(li_30_pc.inf, populacao.inf, na.rm = TRUE),
+              
+              nivel_ensino.fund = first(nivel_ensino.fund),
+              s_populacao.fund = sum(populacao.fund, na.rm = TRUE),
+              li_15_pc.fund = weighted.mean(li_15_pc.fund, populacao.fund, na.rm = TRUE),
+              li_30_pc.fund = weighted.mean(li_30_pc.fund, populacao.fund, na.rm = TRUE),
+              
+              nivel_ensino = last(nivel_ensino),
+              s_populacao = sum(populacao, na.rm = TRUE),
+              li_0_pc = weighted.mean(li_0_pc, populacao, na.rm = TRUE),
+              li_1_pc = weighted.mean(li_1_pc, populacao, na.rm = TRUE),
+              li_3_pc = weighted.mean(li_3_pc, populacao, na.rm = TRUE)) |> 
+    rename(populacao.inf = s_populacao.inf, 
+           populacao.fund = s_populacao.fund,
+           populacao = s_populacao)
+  
+  # combinar tabela de cidades com os totais
+  geral_df <- rbind(geral_df, total_df)
+  
+  
+  # formatar colunas de percentual
   geral_df <- geral_df |> 
     mutate(across(contains("_pc"), scales::percent, accuracy = 0.1))
   
