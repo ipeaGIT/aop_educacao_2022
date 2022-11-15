@@ -148,6 +148,7 @@ lista_munis <- function(pop_mat_por_hex) {
   munis <- pop_mat_por_hex |> 
     select(abbrev_muni) |> 
     distinct() |> 
+    arrange(abbrev_muni) |> 
     pull()
   
   return(munis)

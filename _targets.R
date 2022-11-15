@@ -78,10 +78,11 @@ list(
   tar_target(mapa_insuficiencia_ens_medio, mapear_insuficiencia_ens_medio(hexgrid, limites_municipais, insuficiencia_ens_medio_por_hex), format = "file"),
   
   tar_target(munis, lista_munis(pop_mat_por_hex)), 
+  tar_target(num_figs, 1:20), 
   tar_target(mapa_insuficiencia_ens_infantil_medio, 
-             mapear_insuficiencia_cidade(muni = munis, hexgrid, limites_municipais, 
+             mapear_insuficiencia_cidade(muni = munis, num_fig = num_figs,  hexgrid, limites_municipais, 
                                          insuficiencia_ens_infantil_por_hex, insuficiencia_ens_medio_por_hex), 
-             pattern = map(munis), format = "file")
+             pattern = map(munis, num_figs), format = "file")
   
   
 )

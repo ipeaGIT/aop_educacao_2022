@@ -132,7 +132,7 @@ mapear_insuficiencia_ens_medio <- function(hexgrid, limites_municipais, insufici
 # limites_municipais <- tar_read(limites_municipais)
 # insuficiencia_ens_infantil_por_hex <- tar_read(insuficiencia_ens_infantil_por_hex)
 # insuficiencia_ens_medio_por_hex <- tar_read(insuficiencia_ens_medio_por_hex)
-mapear_insuficiencia_cidade <- function(muni, hexgrid, limites_municipais, 
+mapear_insuficiencia_cidade <- function(muni, num_fig, hexgrid, limites_municipais, 
                                         insuficiencia_ens_infantil_por_hex, insuficiencia_ens_medio_por_hex) {
   
   # nome da cidade
@@ -195,7 +195,7 @@ mapear_insuficiencia_cidade <- function(muni, hexgrid, limites_municipais,
 
   p
   # save plot
-  figura <- here::here("output/anexos", paste0("fig_anx_mapa_insuficiencia_", muni, ".png"))
+  figura <- here::here("output/anexos", paste0("fig_anx_c", num_fig, "_mapa_insuficiencia_", muni, ".png"))
   
   ggsave(plot = p, filename = figura, 
          width = 18, height = 16, units = "cm", dpi = 300, scale=1.2)
@@ -280,11 +280,11 @@ mapear_cidade <- function(cidade, hexgrid, limite,
   return(p)
 }
 
-# cidade = "rec"
+# cidade = "goi"
 # hexgrid = tar_read(hexgrid)
 # limite = tar_read(limites_municipais)
 # insuf_hex = tar_read(insuficiencia_ens_medio_por_hex)
-# li = "pop_li_15"
+# li = "pop_li_3"
 # max_pop = 305L
 # titulo = "Linha de Insuficiência: 15 minutos"
 mapear_cidade_anx <- function(cidade, hexgrid, limite,
@@ -312,7 +312,7 @@ mapear_cidade_anx <- function(cidade, hexgrid, limite,
     st_centroid()
   
   # calcular centroide da cidade, para centralizar o mapa
-  points <- h3_to_point(pop_grid$id_hex, simple = F)
+  points <- h3jsr::cell_to_point(pop_grid$id_hex, simple = F)
   
   centroid_sf <- points |> 
     summarise(.groups = "drop") |> 
@@ -321,7 +321,12 @@ mapear_cidade_anx <- function(cidade, hexgrid, limite,
   centroid_sf$name_muni <- pop_grid$name_muni[[1]]
   
   # calcular área ao redor do centroide, para que todos os mapas tenham a mesma escala
-  size = 16
+  size <- get_layer_buffer_size(points)
+  pt_size <- 0.8
+  if (size >= 20) {
+    pt_size <- 0.5
+  }
+  # size = 16
   units(size) <- "km"
   b_box <- centroid_sf %>%
     st_buffer(dist = size) %>%
@@ -336,7 +341,7 @@ mapear_cidade_anx <- function(cidade, hexgrid, limite,
     geom_sf(aes(fill=pop), color=NA) +
     geom_sf(data = limite, fill = NA, color = "grey60", size = 0.5) +
     # geom_sf(data=filter(pop_grid, matriculas > 0), fill="steelblue4", color="steelblue4", size = 0.05) +
-    geom_sf(data = schools_points, aes(color = escolas), size = 0.8) +
+    geom_sf(data = schools_points, aes(color = escolas), size = pt_size) +
     coord_sf(datum = NA,
              xlim = c(b_box["xmin"], b_box["xmax"]),
              ylim = c(b_box["ymin"], b_box["ymax"])) +
